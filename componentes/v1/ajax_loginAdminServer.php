@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);
+require_once dirname(__DIR__, 3) . '/componentes/v1/ajax_loginAdminServer.php';

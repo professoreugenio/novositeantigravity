@@ -1,0 +1,86 @@
+/* CSS para o sistema de afiliados */
+:root {
+  --primary: #0284C7;
+  --secondary: #10B981;
+  --gradient-main: linear-gradient(135deg, #0284C7 0%, #10B981 100%);
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-bs-theme="dark"] {
+  --primary: #38BDF8;
+  --secondary: #34D399;
+  --gradient-main: linear-gradient(135deg, #38BDF8 0%, #34D399 100%);
+  --bs-primary: #38BDF8;
+  --bs-primary-rgb: 56, 189, 248;
+}
+
+body {
+  font-family: var(--font-body);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  font-size: 0.85rem;
+  padding-top: 70px; /* Para o nav fixed */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* Navbar */
+.custom-nav {
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="light"] .custom-nav {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: var(--bs-body-color);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="light"] .custom-nav .nav-link,
+[data-bs-theme="light"] .custom-nav .btn-icon {
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="light"] .custom-nav .nav-link:hover {
+  color: var(--primary) !important;
+}
+
+/* Botão de toggle */
+.btn-icon {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: currentColor;
+}
+
+.btn-icon:hover {
+  background: rgba(127, 127, 127, 0.1);
+}
+
+/* Conteúdo das páginas */
+.page-content {
+  padding: 2rem 0;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}

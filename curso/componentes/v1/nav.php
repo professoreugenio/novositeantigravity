@@ -37,7 +37,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 custom-dropdown" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item py-2" href="Configuracoes.php"><i class="bi bi-gear me-2 text-muted"></i> Configurações</a></li>
-                            <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-lines-fill me-2 text-muted"></i> Afiliados</a></li>
+                            <li><a class="dropdown-item py-2" href="../afiliados/"><i class="bi bi-person-lines-fill me-2 text-muted"></i> Afiliados</a></li>
                             <li><a class="dropdown-item py-2" href="#"><i class="bi bi-whatsapp me-2 text-muted"></i> WhatsApp</a></li>
                             <li><a class="dropdown-item py-2" href="#"><i class="bi bi-chat-dots me-2 text-muted"></i> Bate papo</a></li>
                             <li><hr class="dropdown-divider"></li>

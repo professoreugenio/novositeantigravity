@@ -1,10 +1,11 @@
 <?php
-declare(strict_types=1)
-;
+
+declare(strict_types=1);
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
 // ✅ pasta acima do public_html (ex.: /home/usuario)
 define('APP_ROOT', dirname(__DIR__, 2));
+define('RAIZ_ROOT', dirname(__DIR__, 1));
 define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
 date_default_timezone_set('America/Fortaleza');
 header('Content-Type: text/html; charset=utf-8');
@@ -281,6 +282,7 @@ if (!empty($idPublicacaoAtiva)) {
                     <li class="breadcrumb-item active" aria-current="page"><?= $ModuloNome ?></li>
                 </ol>
             </nav>
+            <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div>
         </div>
         <div class="row g-4" id="publicacao">
             <!-- Coluna Esquerda: Vídeo e Ações (col-lg-4) -->
@@ -574,7 +576,7 @@ if (!empty($idPublicacaoAtiva)) {
                                     $autorInitials = urlencode((string) $nomeAutor);
                                     $imgUser = "/fotos/usuarios/" . htmlspecialchars((string) $com['pastasc']) . "/" . htmlspecialchars((string) $com['imagem50']);
                                     $tempoCom = formataDataForum($com['data_af'] ?? null, $com['hora_af'] ?? null);
-                                    ?>
+                                ?>
                                     <div class="d-flex gap-3 mb-4" id="colentarios-lista">
                                         <img src="<?= $imgUser ?>" onerror="this.src='/fotos/usuarios/usuario.png';"
                                             alt="<?= htmlspecialchars($nomeAutor) ?>"
@@ -617,7 +619,7 @@ if (!empty($idPublicacaoAtiva)) {
                                                 $tempoResp = formataDataForum($resp['data_af'] ?? null, $resp['hora_af'] ?? null);
                                                 // Identificar visualmente se a resposta é de um Instrutor/Autor da aula
                                                 $badgeInstrutor = false; // Em breve podemos habilitar essa regra.
-                                                ?>
+                                            ?>
                                                 <div
                                                     class="d-flex gap-3 ps-4 border-start border-2 border-primary border-opacity-25 mb-2 pt-1 pb-1">
                                                     <img src="<?= $imgResp ?>" alt="<?= htmlspecialchars($nomeResp) ?>"
@@ -736,7 +738,7 @@ if (!empty($idPublicacaoAtiva)) {
                         $iconeTipo = $isQuestionarioPrimary ? "bi-card-list" : "bi-camera-video";
                         $iconeTipoTexto = $isQuestionarioPrimary ? "Questionário" : "Aula em Vídeo";
                         $checkPrincipalIcon = $jaConcluiu ? "bi-check-lg" : ($isQuestionarioPrimary ? "bi-pencil-square ms-1" : "bi-play-fill ms-1");
-                        ?>
+                    ?>
                         <a href="<?= $hrefUrl ?>"
                             class="list-group-item list-group-item-action border-0 border-bottom p-3 px-4 d-flex align-items-center gap-3 transition-all <?= $isAulaAtiva ? 'bg-light' : '' ?>"
                             style="<?= $bgStyle ?>">
@@ -872,7 +874,7 @@ if (!empty($idPublicacaoAtiva)) {
                                 $pastaPrefix = !empty($anexo['pastapa']) ? htmlspecialchars((string) ($anexo['pastapa'])) . "/" : "";
                                 $fileUrl = $isUrl ? htmlspecialchars($url) : "/anexos/publicacoes/" . $pastaPrefix . htmlspecialchars((string) ($anexo['anexopa']));
                                 $downloadAttr = $isUrl ? 'target="_blank"' : 'download="' . htmlspecialchars((string) ($anexo['titulopa']) . '.' . $ext) . '" target="_blank"';
-                                ?>
+                            ?>
                                 <a href="<?= $fileUrl ?>" <?= $downloadAttr ?>
                                     class="list-group-item list-group-item-action d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 py-3 border-0 border-bottom rounded-0">
                                     <div class="d-flex align-items-center gap-3">
@@ -990,6 +992,35 @@ if (!empty($idPublicacaoAtiva)) {
     <script src="../assets/js/temaToggle.js"></script>
     <script src="../assets/js/likeComent.js"></script>
     <script src="../assets/js/ajaxLikeComent.js"></script>
+
+
+    <?php
+    $urlPaginaAtual = basename((string)($_SERVER['PHP_SELF'] ?? 'aula.php'));
+    ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlPaginaAtual = '<?= htmlspecialchars($urlPaginaAtual, ENT_QUOTES, 'UTF-8') ?>';
+
+            fetch('/componentes/v1/ajax_registraAcessoUrl.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                    credentials: 'same-origin',
+                    body: new URLSearchParams({
+                        urlrah: urlPaginaAtual
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Registro de acesso:', data);
+                })
+                .catch(error => {
+                    console.error('Erro no AJAX de acesso:', error);
+                });
+        });
+    </script>
 </body>
 
 </html>

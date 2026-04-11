@@ -122,7 +122,7 @@ require_once COMPONENTES_ROOT . '/v1/autenticacao.php';
                 <div class="modal-body text-center pt-2">
                     <p class="text-muted mb-4">O que você está procurando hoje?</p>
                     <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-custom-primary btn-lg rounded-pill" data-bs-dismiss="modal">Sou Aluno (Login)</button>
+                        <button type="button" class="btn btn-custom-primary btn-lg rounded-pill" data-bs-dismiss="modal" onclick="location.href='LoginAluno.php'">Sou Aluno (Login)</button>
                         <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill" data-bs-dismiss="modal" onclick="location.href='#ebooks'">Baixe Ebooks</button>
                         <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill" data-bs-dismiss="modal" onclick="location.href='#cursos'">Cursos</button>
                     </div>

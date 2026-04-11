@@ -5,6 +5,7 @@ define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
 // ✅ pasta acima do public_html (ex.: /home/usuario)
 define('APP_ROOT', dirname(__DIR__, 2));
+define('RAIZ_ROOT', dirname(__DIR__, 1));
 define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
 date_default_timezone_set('America/Fortaleza');
 header('Content-Type: text/html; charset=utf-8');

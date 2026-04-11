@@ -1,8 +1,9 @@
 <?php
-declare(strict_types=1)
-;
+
+declare(strict_types=1);
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
+define('RAIZ_ROOT', dirname(__DIR__, 1));
 // ✅ pasta acima do public_html (ex.: /home/usuario)
 define('APP_ROOT', dirname(__DIR__, 2));
 define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
@@ -60,6 +61,7 @@ if (isset($_SESSION['dadosdia'])) {
                 <h1 class="fw-bold mb-1">Meus Cursos </h1>
                 <p class="text-muted mb-0">Último acesso: <?= $ultimadata ?? 'sem registros' ?> <?= $codigoUser ?> Continue
                     de onde você parou e alcance seus objetivos.</p>
+                <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div>
             </div>
             <div class="text-muted small border bg-white rounded-pill px-3 py-1 shadow-sm">
                 <?php echo $userTempoRestante; ?>
@@ -130,7 +132,7 @@ if (isset($_SESSION['dadosdia'])) {
                         $assistidas = (int) ($assistidasRow['assistidas'] ?? 0);
 
                         $percentualCurso = $totalAulas > 0 ? round(($assistidas / $totalAulas) * 100) : 0;
-                        ?>
+            ?>
                         <div class="col-md-6 col-lg-3" id="cursos">
                             <!-- Alterado a url para action.php com id do curso encriptado -->
                             <a href="action.php?tokemCurso=<?= time(); ?>&cur=<?= urlencode(encrypt_secure((string) $idCurso . "&" . (string) $idTurma, 'e')) ?>"
@@ -164,7 +166,7 @@ if (isset($_SESSION['dadosdia'])) {
                                 </div>
                             </a>
                         </div>
-                        <?php
+            <?php
                     }
                 } else {
                     echo '<div class="col-12"><div class="alert alert-info">Você ainda não está inscrito em nenhum curso.</div></div>';
@@ -188,32 +190,7 @@ if (isset($_SESSION['dadosdia'])) {
     </footer>
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Theme Toggle Logic
-        const toggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.querySelector('.sun-icon');
-        const moonIcon = document.querySelector('.moon-icon');
-        const htmlElement = document.documentElement;
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        htmlElement.setAttribute('data-bs-theme', savedTheme);
-        if (savedTheme === 'dark') {
-            sunIcon.classList.add('d-none');
-            moonIcon.classList.remove('d-none');
-        }
-        toggleBtn.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            htmlElement.setAttribute('data-bs-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            if (newTheme === 'dark') {
-                sunIcon.classList.add('d-none');
-                moonIcon.classList.remove('d-none');
-            } else {
-                sunIcon.classList.remove('d-none');
-                moonIcon.classList.add('d-none');
-            }
-        });
-    </script>
+    <script src="../assets/js/temaToggle.js"></script>
 </body>
 
 </html>

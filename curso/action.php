@@ -3,6 +3,7 @@ declare(strict_types=1)
 ;
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
+define('RAIZ_ROOT', dirname(__DIR__, 1));
 define('SESSION_TTL', 60 * 60 * 8); // 6 horas
 // ✅ pasta acima do public_html (ex.: /home/usuario)
 define('APP_ROOT', dirname(__DIR__, 2));

@@ -5,6 +5,7 @@ define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
 // ✅ pasta acima do public_html (ex.: /home/usuario)
 define('APP_ROOT', dirname(__DIR__, 2));
+define('RAIZ_ROOT', dirname(__DIR__, 1));
 define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
 date_default_timezone_set('America/Fortaleza');
 header('Content-Type: text/html; charset=utf-8');
@@ -215,7 +216,7 @@ try {
                         <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span> - <?= $idCurso ?> <?= $idTurma ?>
                 </div>
                 <h3 class="fw-bold mb-1 text-body-emphasis"><?= $nomeTurma ?> </h3>
-               
+               <div><?php echo encrypt_secure($_COOKIE['registraacesso'],'d');  ?></div>
                 <?php if (!empty($userTempoRestante)): ?>
                     <div id="count-temporestante"
                         class="text-muted small border bg-white rounded-pill px-2 py-1 shadow-sm mt-3 d-inline-block">

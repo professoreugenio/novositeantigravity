@@ -1863,3 +1863,285 @@ h6,
 .toast-container {
   z-index: 1080;
 }
+
+/** ajuste card botes ações da aula **/
+
+/* =========================================================
+MELHORIA VISUAL - CARD AÇÕES DA AULA
+Estrutura: #botoesacoesdaaula
+========================================================= */
+
+#botoesacoesdaaula {
+  border: 1px solid rgba(15, 23, 42, 0.06) !important;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08) !important;
+}
+
+#botoesacoesdaaula .card-header {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), rgba(99, 102, 241, 0.05)) !important;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.08) !important;
+  color: #64748b !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+#botoesacoesdaaula .card-body {
+  background: transparent;
+}
+
+/* Botão base */
+#botoesacoesdaaula .btn-action-custom {
+  min-height: 64px;
+  border-radius: 16px !important;
+  padding: 0.95rem 1rem !important;
+  font-size: 0.92rem !important;
+  font-weight: 700;
+  border: 1px solid transparent !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#botoesacoesdaaula .btn-action-custom::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+#botoesacoesdaaula .btn-action-custom:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+#botoesacoesdaaula .btn-action-custom:hover::before {
+  opacity: 1;
+}
+
+#botoesacoesdaaula .btn-action-custom:focus {
+  box-shadow:
+    0 0 0 0.22rem rgba(37, 99, 235, 0.18),
+    0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+#botoesacoesdaaula .btn-action-custom span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-align: left;
+  line-height: 1.2;
+}
+
+#botoesacoesdaaula .btn-action-custom i {
+  font-size: 1rem;
+}
+
+/* Ícone principal */
+#botoesacoesdaaula .btn-action-custom span:first-child i {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+/* Chevron */
+#botoesacoesdaaula .btn-action-custom .bi-chevron-right {
+  font-size: 0.95rem;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#botoesacoesdaaula .btn-action-custom:hover .bi-chevron-right {
+  transform: translateX(3px);
+}
+
+/* Badges */
+#botoesacoesdaaula .action-badge {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+/* Cores refinadas */
+#botoesacoesdaaula .btn-action-blue {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #1d4ed8;
+  border-color: rgba(59, 130, 246, 0.14) !important;
+}
+
+#botoesacoesdaaula .btn-action-purple {
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+  color: #7e22ce;
+  border-color: rgba(147, 51, 234, 0.14) !important;
+}
+
+#botoesacoesdaaula .btn-action-green {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.14) !important;
+}
+
+#botoesacoesdaaula .btn-action-yellow {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  color: #b45309;
+  border-color: rgba(234, 179, 8, 0.18) !important;
+}
+
+#botoesacoesdaaula .btn-action-pink {
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+  color: #be123c;
+  border-color: rgba(225, 29, 72, 0.14) !important;
+}
+
+#botoesacoesdaaula .btn-action-indigo {
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  color: #4338ca;
+  border-color: rgba(79, 70, 229, 0.14) !important;
+}
+
+/* Badges claras */
+#botoesacoesdaaula .badge-blue {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+#botoesacoesdaaula .badge-green {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+
+#botoesacoesdaaula .badge-yellow {
+  background: rgba(234, 179, 8, 0.18);
+  color: #a16207;
+}
+
+#botoesacoesdaaula .badge-indigo {
+  background: rgba(79, 70, 229, 0.12);
+  color: #4338ca;
+}
+
+/* Estado desabilitado */
+#botoesacoesdaaula .btn-action-custom:disabled,
+#botoesacoesdaaula .btn-action-custom.disabled,
+#botoesacoesdaaula .btn-action-custom.opacity-50 {
+  opacity: 0.62 !important;
+  filter: grayscale(0.08);
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+DARK MODE - CARD AÇÕES DA AULA
+========================================================= */
+
+[data-bs-theme="dark"] #botoesacoesdaaula {
+  background: linear-gradient(180deg, #0f172a 0%, #111827 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .card-header {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(99, 102, 241, 0.08)) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #94a3b8 !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .card-body {
+  background: transparent !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-custom {
+  color: #e5e7eb !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-custom:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-custom span:first-child i {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Cores dark refinadas */
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-blue {
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.22), rgba(59, 130, 246, 0.14)) !important;
+  color: #bfdbfe !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-purple {
+  background: linear-gradient(135deg, rgba(88, 28, 135, 0.24), rgba(147, 51, 234, 0.14)) !important;
+  color: #e9d5ff !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-green {
+  background: linear-gradient(135deg, rgba(20, 83, 45, 0.24), rgba(22, 163, 74, 0.14)) !important;
+  color: #bbf7d0 !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-yellow {
+  background: linear-gradient(135deg, rgba(120, 53, 15, 0.24), rgba(234, 179, 8, 0.14)) !important;
+  color: #fde68a !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-pink {
+  background: linear-gradient(135deg, rgba(136, 19, 55, 0.24), rgba(225, 29, 72, 0.14)) !important;
+  color: #fecdd3 !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-indigo {
+  background: linear-gradient(135deg, rgba(49, 46, 129, 0.24), rgba(79, 70, 229, 0.14)) !important;
+  color: #c7d2fe !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .badge-blue {
+  background: rgba(59, 130, 246, 0.22) !important;
+  color: #dbeafe !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .badge-green {
+  background: rgba(22, 163, 74, 0.22) !important;
+  color: #dcfce7 !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .badge-yellow {
+  background: rgba(234, 179, 8, 0.22) !important;
+  color: #fef3c7 !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .badge-indigo {
+  background: rgba(79, 70, 229, 0.22) !important;
+  color: #e0e7ff !important;
+}
+
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-custom:disabled,
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-custom.disabled,
+[data-bs-theme="dark"] #botoesacoesdaaula .btn-action-custom.opacity-50 {
+  opacity: 0.42 !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #64748b !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}

@@ -246,6 +246,42 @@ if (!empty($idPublicacaoAtiva)) {
     }
 }
 ?>
+
+<?php
+$anotacaoAula = [
+    'codigoanotacoes' => 0,
+    'textosa' => ''
+];
+$temAnotacaoAula = 0;
+
+if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
+    try {
+        $stmtAnot = $con->prepare("
+            SELECT codigoanotacoes, textosa
+            FROM new_sistema_anotacoes
+            WHERE idpublicsa = :idpublic
+              AND idusuariosa = :idusuario
+            LIMIT 1
+        ");
+        $stmtAnot->bindValue(':idpublic', $idPublicacaoAtiva, PDO::PARAM_INT);
+        $stmtAnot->bindValue(':idusuario', $codigoUser, PDO::PARAM_INT);
+        $stmtAnot->execute();
+
+        $anotacaoTmp = $stmtAnot->fetch(PDO::FETCH_ASSOC);
+        if ($anotacaoTmp) {
+            $anotacaoAula = $anotacaoTmp;
+            $textoLimpo = trim(strip_tags((string)($anotacaoTmp['textosa'] ?? '')));
+            $temAnotacaoAula = ($textoLimpo !== '') ? 1 : 0;
+        }
+    } catch (Throwable $e) {
+        $anotacaoAula = [
+            'codigoanotacoes' => 0,
+            'textosa' => ''
+        ];
+        $temAnotacaoAula = 0;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
 
@@ -264,6 +300,102 @@ if (!empty($idPublicacaoAtiva)) {
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?= filemtime(__DIR__ . '/../assets/css/styles.css'); ?>">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+
+    <style>
+        #modalMeuCaderno .modal-dialog {
+            max-width: min(1100px, 96vw);
+            margin: 0;
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1056;
+        }
+
+        #modalMeuCaderno .modal-content {
+            border: 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.20);
+        }
+
+        #modalMeuCaderno .modal-header {
+            cursor: move;
+            user-select: none;
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            color: #fff;
+            border-bottom: 0;
+        }
+
+        #modalMeuCaderno .modal-header .btn-close {
+            filter: invert(1);
+            opacity: 0.9;
+        }
+
+        #modalMeuCaderno .modal-body {
+            background: var(--bs-body-bg);
+        }
+
+        #modalMeuCaderno .modal-footer {
+            background: var(--bs-tertiary-bg);
+            border-top: 1px solid var(--bs-border-color);
+        }
+
+        #modalMeuCaderno .note-editor.note-frame {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.85rem;
+            overflow: hidden;
+            background: var(--bs-body-bg);
+        }
+
+        #modalMeuCaderno .note-toolbar {
+            background: var(--bs-tertiary-bg);
+            border-bottom: 1px solid var(--bs-border-color);
+        }
+
+        #modalMeuCaderno .note-editing-area,
+        #modalMeuCaderno .note-editable {
+            background: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+
+        #modalMeuCaderno .note-editable {
+            min-height: 380px;
+            max-height: 60vh;
+        }
+
+        #modalMeuCaderno .caderno-status {
+            font-size: 0.85rem;
+        }
+
+        #modalMeuCaderno .drag-handle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dragging-modal {
+            user-select: none;
+        }
+
+        [data-bs-theme="dark"] #modalMeuCaderno .note-toolbar .note-btn,
+        [data-bs-theme="dark"] #modalMeuCaderno .note-toolbar .dropdown-toggle {
+            background: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        [data-bs-theme="dark"] #modalMeuCaderno .note-toolbar .note-btn:hover,
+        [data-bs-theme="dark"] #modalMeuCaderno .note-toolbar .dropdown-toggle:hover {
+            background: #374151;
+            color: #fff;
+        }
+
+        [data-bs-theme="dark"] #modalMeuCaderno .note-editor.note-frame {
+            border-color: #374151;
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
@@ -377,7 +509,7 @@ if (!empty($idPublicacaoAtiva)) {
                 $qtdAnexos = count($anexosAula);
                 ?>
                 <!-- Actions Card -->
-                <div class="card border-0 shadow-sm rounded-4">
+                <div class="card border-0 shadow-sm rounded-4" id="acoesdaaula">
                     <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 text-uppercase fw-bold text-muted fw-bold"
                         style="font-size: 0.8rem; letter-spacing: 0.5px;">
                         Ações da Aula
@@ -387,7 +519,7 @@ if (!empty($idPublicacaoAtiva)) {
                             <div class="col-6">
                                 <button type="button" id="bt-anexos"
                                     class="btn btn-action-custom btn-action-blue w-100 d-flex justify-content-between align-items-center <?= $qtdAnexos == 0 ? 'opacity-50' : '' ?>"
-                                    style="font-size: 0.85rem;" <?= $qtdAnexos > 0 ? 'data-bs-toggle="modal" data-bs-target="#modalAnexos"' : 'disabled' ?>>
+                                    <?= $qtdAnexos > 0 ? 'data-bs-toggle="modal" data-bs-target="#modalAnexos"' : 'disabled' ?>>
                                     <span><i class="bi bi-paperclip fw-bold me-1"></i> Anexos</span>
                                     <span class="action-badge badge-blue"><?= $qtdAnexos ?></span>
                                 </button>
@@ -409,27 +541,19 @@ if (!empty($idPublicacaoAtiva)) {
                                 </a>
                             </div>
                             <div class="col-6">
-                                <?php if ($PubTemAtividade): ?>
                                     <button
                                         class="btn btn-action-custom btn-action-yellow w-100 d-flex justify-content-between align-items-center"
                                         style="font-size: 0.85rem;">
-                                        <span><i class="bi bi-upload me-1"></i> Atividades</span>
+                                        <span><i class="bi bi-upload me-1"></i> Printes</span>
                                         <span class="action-badge badge-yellow"><i class="bi bi-clock-fill"
                                                 style="transform: scale(0.8)"></i></span>
                                     </button>
-                                <?php else: ?>
-                                    <button disabled
-                                        class="btn btn-action-custom btn-action-yellow w-100 d-flex justify-content-between align-items-center opacity-50"
-                                        style="font-size: 0.85rem;">
-                                        <span><i class="bi bi-upload me-1"></i> Atividades</span>
-                                        <span class="action-badge badge-yellow"><i class="bi bi-slash-circle"
-                                                style="transform: scale(0.8)"></i></span>
-                                    </button>
-                                <?php endif; ?>
+                                
+                               
                             </div>
                             <div class="col-6">
                                 <button
-                                    class="btn btn-action-custom btn-action-pink w-100 d-flex justify-content-between align-items-center"
+                                    class="btn btn-action-custom border-1 btn-action-pink w-100 d-flex justify-content-between align-items-center"
                                     style="font-size: 0.85rem;">
                                     <span><i class="bi bi-star-fill me-1"></i> Depoimento</span>
                                     <i class="bi bi-chevron-right opacity-75"></i>
@@ -437,10 +561,14 @@ if (!empty($idPublicacaoAtiva)) {
                             </div>
                             <div class="col-6">
                                 <button
+                                    type="button"
+                                    id="btnMeuCaderno"
                                     class="btn btn-action-custom btn-action-indigo w-100 d-flex justify-content-between align-items-center"
-                                    style="font-size: 0.85rem;">
+                                    style="font-size: 0.85rem;"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalMeuCaderno">
                                     <span><i class="bi bi-journal-bookmark-fill me-1"></i> Meu Caderno</span>
-                                    <span class="action-badge badge-indigo">3</span>
+                                    <span id="badgeMeuCaderno" class="action-badge badge-indigo"><?= (int)$temAnotacaoAula ?></span>
                                 </button>
                             </div>
                         </div>
@@ -977,6 +1105,54 @@ if (!empty($idPublicacaoAtiva)) {
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="modalMeuCaderno" tabindex="-1" aria-labelledby="modalMeuCadernoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header px-4 py-3" id="modalMeuCadernoHeader">
+                    <div class="drag-handle">
+                        <i class="bi bi-arrows-move"></i>
+                        <h5 class="modal-title fw-bold mb-0" id="modalMeuCadernoLabel">
+                            Meu Caderno de Anotações
+                        </h5>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <span id="statusCaderno" class="caderno-status text-white-50">Pronto</span>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                </div>
+
+                <div class="modal-body p-4">
+                    <input type="hidden" id="caderno_idpublicacao" value="<?= (int)$idPublicacaoAtiva ?>">
+                    <input type="hidden" id="caderno_idusuario" value="<?= (int)$codigoUser ?>">
+
+                    <div class="mb-3">
+                        <div class="small text-muted mb-2">
+                            Suas anotações desta aula ficam salvas automaticamente.
+                        </div>
+                        <textarea id="summernoteCaderno"><?= htmlspecialchars((string)($anotacaoAula['textosa'] ?? ''), ENT_QUOTES, 'UTF-8') ?></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer px-4 py-3">
+                    <div class="me-auto small text-muted">
+                        Auto-salvamento a cada 5 minutos
+                    </div>
+
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4" data-bs-dismiss="modal">
+                        Fechar
+                    </button>
+
+                    <button type="button" id="btnSalvarCaderno" class="btn btn-primary rounded-3 px-4">
+                        <i class="bi bi-save me-1"></i> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-body-tertiary py-4 border-top mt-auto">
         <div class="container d-flex flex-wrap justify-content-between align-items-center">
@@ -1019,6 +1195,288 @@ if (!empty($idPublicacaoAtiva)) {
                 .catch(error => {
                     console.error('Erro no AJAX de acesso:', error);
                 });
+        });
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/lang/summernote-pt-BR.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalEl = document.getElementById('modalMeuCaderno');
+            const modalHeader = document.getElementById('modalMeuCadernoHeader');
+            const statusEl = document.getElementById('statusCaderno');
+            const badgeEl = document.getElementById('badgeMeuCaderno');
+            const btnSalvar = document.getElementById('btnSalvarCaderno');
+
+            const idPublicacao = document.getElementById('caderno_idpublicacao')?.value || '0';
+
+            let summernoteInicializado = false;
+            let cadernoDirty = false;
+            let cadernoSaving = false;
+            let autoSaveTimer = null;
+
+            function setStatus(texto, classe = 'text-white-50') {
+                statusEl.textContent = texto;
+                statusEl.className = 'caderno-status ' + classe;
+            }
+
+            function atualizarBadge(temAnotacao) {
+                badgeEl.textContent = String(temAnotacao ? 1 : 0);
+            }
+
+            function inicializarSummernote() {
+                if (summernoteInicializado) return;
+
+                $('#summernoteCaderno').summernote({
+                    placeholder: 'Digite aqui suas anotações da aula...',
+                    lang: 'pt-BR',
+                    height: 380,
+                    dialogsInBody: true,
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['fontname', 'bold', 'italic', 'underline']],
+                        ['para', ['ul', 'ol']],
+                        ['insert', ['link']],
+                        ['view', ['codeview']]
+                    ],
+                    styleTags: [
+                        'p',
+                        {
+                            title: 'Título 1',
+                            tag: 'h1',
+                            value: 'h1'
+                        },
+                        {
+                            title: 'Título 2',
+                            tag: 'h2',
+                            value: 'h2'
+                        },
+                        {
+                            title: 'Título 3',
+                            tag: 'h3',
+                            value: 'h3'
+                        },
+                        {
+                            title: 'Título 4',
+                            tag: 'h4',
+                            value: 'h4'
+                        }
+                    ],
+                    fontNames: ['Arial', 'Calibri', 'Courier New', 'Georgia', 'Tahoma', 'Times New Roman', 'Verdana'],
+                    callbacks: {
+                        onChange: function() {
+                            cadernoDirty = true;
+                            setStatus('Alterações não salvas', 'text-warning');
+                        }
+                    }
+                });
+
+                summernoteInicializado = true;
+            }
+
+            async function carregarAnotacao() {
+                try {
+                    setStatus('Carregando...', 'text-info');
+                    const body = new URLSearchParams({
+                        idpublicsa: idPublicacao
+                    });
+
+                    const response = await fetch('/componentes/v1/ajax_anotacao_buscar.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        credentials: 'same-origin',
+                        body
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.status) {
+                        setStatus(data.msg || 'Erro ao carregar', 'text-danger');
+                        return;
+                    }
+
+                    $('#summernoteCaderno').summernote('code', data.texto || '');
+                    cadernoDirty = false;
+                    atualizarBadge(parseInt(data.tem_anotacao || 0));
+                    setStatus('Conteúdo carregado', 'text-success');
+
+                } catch (error) {
+                    console.error(error);
+                    setStatus('Erro ao carregar', 'text-danger');
+                }
+            }
+
+            async function salvarAnotacao(origem = 'manual') {
+                if (cadernoSaving || !summernoteInicializado) return true;
+
+                const html = $('#summernoteCaderno').summernote('code');
+
+                if (!cadernoDirty && origem !== 'fechar') {
+                    return true;
+                }
+
+                try {
+                    cadernoSaving = true;
+                    setStatus(
+                        origem === 'auto' ? 'Auto-salvando...' : 'Salvando...',
+                        'text-info'
+                    );
+
+                    btnSalvar.disabled = true;
+
+                    const body = new URLSearchParams({
+                        idpublicsa: idPublicacao,
+                        textosa: html
+                    });
+
+                    const response = await fetch('/componentes/v1/ajax_anotacao_salvar.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        credentials: 'same-origin',
+                        body
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.status) {
+                        setStatus(data.msg || 'Erro ao salvar', 'text-danger');
+                        return false;
+                    }
+
+                    cadernoDirty = false;
+                    atualizarBadge(parseInt(data.tem_anotacao || 0));
+                    setStatus(
+                        origem === 'auto' ? 'Auto-salvo com sucesso' : 'Salvo com sucesso',
+                        'text-success'
+                    );
+                    return true;
+
+                } catch (error) {
+                    console.error(error);
+                    setStatus('Erro ao salvar', 'text-danger');
+                    return false;
+                } finally {
+                    cadernoSaving = false;
+                    btnSalvar.disabled = false;
+                }
+            }
+
+            function iniciarAutoSave() {
+                pararAutoSave();
+
+                autoSaveTimer = setInterval(() => {
+                    const modalAberto = modalEl.classList.contains('show');
+                    if (modalAberto && cadernoDirty) {
+                        salvarAnotacao('auto');
+                    }
+                }, 5 * 60 * 1000);
+            }
+
+            function pararAutoSave() {
+                if (autoSaveTimer) {
+                    clearInterval(autoSaveTimer);
+                    autoSaveTimer = null;
+                }
+            }
+
+            // Modal abriu
+            modalEl.addEventListener('shown.bs.modal', async function() {
+                inicializarSummernote();
+                await carregarAnotacao();
+                iniciarAutoSave();
+            });
+
+            // Salvar ao fechar
+            modalEl.addEventListener('hide.bs.modal', function() {
+                salvarAnotacao('fechar');
+                pararAutoSave();
+            });
+
+            // Botão manual
+            btnSalvar.addEventListener('click', function() {
+                salvarAnotacao('manual');
+            });
+
+            // Modal arrastável
+            (function tornarModalArrastavel() {
+                const dialog = modalEl.querySelector('.modal-dialog');
+
+                let dragging = false;
+                let startX = 0;
+                let startY = 0;
+                let initialLeft = 0;
+                let initialTop = 0;
+                let positioned = false;
+
+                function garantirPosicaoInicial() {
+                    if (positioned) return;
+
+                    const largura = dialog.offsetWidth || 900;
+                    const left = Math.max((window.innerWidth - largura) / 2, 12);
+
+                    dialog.style.left = left + 'px';
+                    dialog.style.top = '70px';
+                    dialog.style.transform = 'none';
+                    positioned = true;
+                }
+
+                modalEl.addEventListener('shown.bs.modal', garantirPosicaoInicial);
+
+                modalHeader.addEventListener('mousedown', function(e) {
+                    if (e.target.closest('button')) return;
+
+                    garantirPosicaoInicial();
+
+                    dragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialLeft = parseFloat(dialog.style.left) || 0;
+                    initialTop = parseFloat(dialog.style.top) || 70;
+
+                    document.body.classList.add('dragging-modal');
+                });
+
+                document.addEventListener('mousemove', function(e) {
+                    if (!dragging) return;
+
+                    let newLeft = initialLeft + (e.clientX - startX);
+                    let newTop = initialTop + (e.clientY - startY);
+
+                    const maxLeft = window.innerWidth - dialog.offsetWidth - 12;
+                    const maxTop = window.innerHeight - 120;
+
+                    newLeft = Math.max(12, Math.min(newLeft, maxLeft));
+                    newTop = Math.max(12, Math.min(newTop, maxTop));
+
+                    dialog.style.left = newLeft + 'px';
+                    dialog.style.top = newTop + 'px';
+                });
+
+                document.addEventListener('mouseup', function() {
+                    dragging = false;
+                    document.body.classList.remove('dragging-modal');
+                });
+
+                window.addEventListener('resize', function() {
+                    if (!positioned) return;
+
+                    const leftAtual = parseFloat(dialog.style.left) || 12;
+                    const topAtual = parseFloat(dialog.style.top) || 70;
+
+                    const maxLeft = Math.max(window.innerWidth - dialog.offsetWidth - 12, 12);
+                    const maxTop = Math.max(window.innerHeight - 120, 12);
+
+                    dialog.style.left = Math.min(leftAtual, maxLeft) + 'px';
+                    dialog.style.top = Math.min(topAtual, maxTop) + 'px';
+                });
+            })();
         });
     </script>
 </body>

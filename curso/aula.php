@@ -541,15 +541,18 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                                 </a>
                             </div>
                             <div class="col-6">
-                                    <button
-                                        class="btn btn-action-custom btn-action-yellow w-100 d-flex justify-content-between align-items-center"
-                                        style="font-size: 0.85rem;">
-                                        <span><i class="bi bi-upload me-1"></i> Printes</span>
-                                        <span class="action-badge badge-yellow"><i class="bi bi-clock-fill"
-                                                style="transform: scale(0.8)"></i></span>
-                                    </button>
+
+                                <a href="Printes.php"
+                                    class="btn btn-action-custom btn-action-yellow w-100 d-flex justify-content-between align-items-center"
+                                    style="font-size: 0.85rem; text-decoration: none;">
+                                    <span><i class="bi bi-upload me-1"></i> Printes</span>
+                                    <span class="action-badge badge-yellow"><i class="bi bi-clock-fill"
+                                            style="transform: scale(0.8)"></i></span>
+                                </a>
+
                                 
-                               
+
+
                             </div>
                             <div class="col-6">
                                 <button

@@ -716,32 +716,32 @@ h6,
 }
 
 .btn-action-blue {
-  background-color: #F4F7FF;
+  background: linear-gradient(135deg, #ffffff 0%, #F4F7FF 100%);
   color: #3B82F6;
 }
 
 .btn-action-purple {
-  background-color: #FDF9FF;
+  background: linear-gradient(135deg, #ffffff 0%, #f2e3f9 100%);
   color: #9333EA;
 }
 
 .btn-action-green {
-  background-color: #F4FDF7;
+  background: linear-gradient(135deg, #ffffff 0%, #e7fbed 100%);
   color: #16A34A;
 }
 
 .btn-action-yellow {
-  background-color: #FFFFF0;
+  background: linear-gradient(135deg, #ffffff 0%, #fbfbb6 100%);
   color: #B45309;
 }
 
 .btn-action-pink {
-  background-color: #FFF6F8;
+  background: linear-gradient(135deg, #ffffff 0%, #f5d7de 100%);
   color: #E11D48;
 }
 
 .btn-action-indigo {
-  background-color: #F4F7FF;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e9fb 100%);
   color: #4F46E5;
 }
 

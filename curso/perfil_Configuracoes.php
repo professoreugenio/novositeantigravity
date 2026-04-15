@@ -108,7 +108,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
                         <li class="breadcrumb-item active" aria-current="page">Configurações</li>
                     </ol>
                 </nav>
-                <h1 class="fw-bold mb-1">Meu Perfil</h1>
+                
                 <p class="text-muted mb-0">Gerencie suas informações pessoais e os dados de sua conta.</p>
             </div>
             <div>

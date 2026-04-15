@@ -117,8 +117,8 @@ if ($pastasc !== '' && $imagem50 !== '') {
                         <li class="breadcrumb-item active" aria-current="page">Atualizar Foto</li>
                     </ol>
                 </nav>
-                <h1 class="fw-bold mb-1">Minha Foto de Perfil</h1>
-                <?php echo $codigoUser;  ?>
+
+
                 <p class="text-muted mb-0">Envie uma nova imagem e o sistema criará automaticamente as versões otimizadas.</p>
             </div>
             <div>
@@ -180,7 +180,7 @@ if ($pastasc !== '' && $imagem50 !== '') {
                         <div class="col-lg-5">
                             <div class="text-center">
                                 <div class="mb-3">
-                                    
+
                                     <img src="<?= htmlspecialchars($foto200Url, ENT_QUOTES, 'UTF-8') ?>?v=<?= time() ?>"
                                         alt="Foto de perfil"
                                         id="fotoAtualGrande"
@@ -188,7 +188,7 @@ if ($pastasc !== '' && $imagem50 !== '') {
                                 </div>
 
                                 <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
-                                    
+
                                     <img src="<?= htmlspecialchars($foto50Url, ENT_QUOTES, 'UTF-8') ?>?v=<?= time() ?>"
                                         alt="Miniatura 50"
                                         id="fotoAtualMini"

@@ -155,7 +155,7 @@ function socialButton(?string $url, string $icon, string $label, string $id): st
                         <li class="breadcrumb-item active" aria-current="page">Redes Sociais</li>
                     </ol>
                 </nav>
-                <h1 class="fw-bold mb-1">Minhas Redes Sociais</h1>
+                
                 <p class="text-muted mb-0">Atualize os links do seu perfil para facilitar a conexão com outros usuários.</p>
             </div>
             <div>

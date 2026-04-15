@@ -35,7 +35,7 @@ $idPublicacao = (int)($_POST['idpublicacao'] ?? 0);
 $idModulo = (int)($_POST['idmodulo'] ?? 0);
 $idAluno = (int)($_POST['idaluno'] ?? 0);
 $nomeTurma = trim((string)($_POST['nometurma'] ?? 'Turma atual'));
-$isProfessor = !empty($_SESSION['admin_logado']);
+$isProfessor = !empty($_SESSION['admin_logado']) || !empty($_SESSION['usuario_logado']);
 
 if ($idPublicacao <= 0 || $idModulo <= 0 || $idAluno <= 0) {
     echo '<div class="col-12"><div class="empty-state"><i class="bi bi-exclamation-circle fs-1 text-warning d-block mb-2"></i><div class="fw-semibold">Não foi possível identificar a atividade.</div></div></div>';

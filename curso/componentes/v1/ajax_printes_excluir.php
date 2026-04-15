@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $id = (int)($_POST['id'] ?? 0);
 $idUsuarioLogado = (int)($codigocadastro ?? $codigoUsuario ?? $codigousuario ?? $_SESSION['codigousuario'] ?? 0);
-$isProfessor = !empty($_SESSION['admin_logado']);
+$isProfessor = !empty($_SESSION['admin_logado']) || !empty($_SESSION['usuario_logado']);
 
 if ($id <= 0) {
     jsonExit(false, 'Registro inválido.');

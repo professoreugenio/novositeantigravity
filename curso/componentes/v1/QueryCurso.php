@@ -26,8 +26,11 @@ if (isset($_SESSION['usuario_logado']) && $_SESSION['usuario_logado'] === true &
         $idTurma = isset($dadosArray[1]) ? trim($dadosArray[1]) : '';
 
         // Variáveis para receber os nomes
-        $nomeCurso = '';
-        $nomeTurma = '';
+        $nomeCurso = 'Não definido';
+        $nomeTurma = 'Turma não definida';
+        $linkWhatsapp = '#';
+        $dataInicioST = '00/00/0000';
+        $dataFimST = '00/00/0000';
 
         try {
             if (!isset($con) || !$con instanceof PDO) {
@@ -37,7 +40,10 @@ if (isset($_SESSION['usuario_logado']) && $_SESSION['usuario_logado'] === true &
             $stmtQCurso = $con->prepare("
                 SELECT 
                     c.nomecurso, 
-                    t.nometurma 
+                    t.nometurma, 
+                    t.datainiciost, 
+                    t.datafimst, 
+                    t.linkwhatsapp 
                 FROM new_sistema_cursos c
                 LEFT JOIN new_sistema_cursos_turmas t ON c.codigocursos = t.codcursost AND t.codigoturma = :idTurma
                 WHERE c.codigocursos = :idCurso
@@ -46,37 +52,40 @@ if (isset($_SESSION['usuario_logado']) && $_SESSION['usuario_logado'] === true &
             $stmtQCurso->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
             $stmtQCurso->bindValue(':idTurma', $idTurma, PDO::PARAM_STR);
             $stmtQCurso->execute();
-
+            $stmt = $con->prepare('');
             $rowQCurso = $stmtQCurso->fetch(PDO::FETCH_ASSOC);
             if ($rowQCurso) {
-                $nomeCurso = trim((string) $rowQCurso['nomecurso']);
-                $nomeTurma = trim((string) $rowQCurso['nometurma']);
+                $nomeCurso = trim((string) $rowQCurso['nomecurso']) ?? 'Não definido';
+                $nomeTurma = trim((string) $rowQCurso['nometurma']) ?? 'Turma não definida';
+                $linkWhatsapp = trim((string) $rowQCurso['linkwhatsapp']) ?? '#';
+                $dataInicioST = trim((string) $rowQCurso['datainiciost']) ?? '00/00/0000';
+                $dataFimST = trim((string) $rowQCurso['datafimst']) ?? '00/00/0000';
             }
 
             // Total aulas do curso
-                        $stmtTotal = $con->prepare("
+            $stmtTotal = $con->prepare("
                             SELECT COUNT(*) as total 
                             FROM a_aluno_publicacoes_cursos 
                             WHERE idcursopc = :idCurso
                         ");
-                        $stmtTotal->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
-                        $stmtTotal->execute();
-                        $totalRow = $stmtTotal->fetch(PDO::FETCH_ASSOC);
-                        $totalAulas = (int) ($totalRow['total'] ?? 0);
+            $stmtTotal->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
+            $stmtTotal->execute();
+            $totalRow = $stmtTotal->fetch(PDO::FETCH_ASSOC);
+            $totalAulas = (int) ($totalRow['total'] ?? 0);
 
-                        // Aulas assistidas
-                        $stmtAssistidas = $con->prepare("
+            // Aulas assistidas
+            $stmtAssistidas = $con->prepare("
                             SELECT COUNT(DISTINCT idpublicaa) as assistidas 
                             FROM a_aluno_andamento_aula 
                             WHERE idalunoaa = :idUser AND idcursoaa = :idCurso
                         ");
-                        $stmtAssistidas->bindValue(':idUser', $codigoUser, PDO::PARAM_INT);
-                        $stmtAssistidas->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
-                        $stmtAssistidas->execute();
-                        $assistidasRow = $stmtAssistidas->fetch(PDO::FETCH_ASSOC);
-                        $assistidas = (int) ($assistidasRow['assistidas'] ?? 0);
+            $stmtAssistidas->bindValue(':idUser', $codigoUser, PDO::PARAM_INT);
+            $stmtAssistidas->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
+            $stmtAssistidas->execute();
+            $assistidasRow = $stmtAssistidas->fetch(PDO::FETCH_ASSOC);
+            $assistidas = (int) ($assistidasRow['assistidas'] ?? 0);
 
-                        $percentualCurso = $totalAulas > 0 ? round(($assistidas / $totalAulas) * 100) : 0;
+            $percentualCurso = $totalAulas > 0 ? round(($assistidas / $totalAulas) * 100) : 0;
         } catch (Throwable $e) {
             // Em caso de erro na consulta, mantemos as variáveis vazias
         }

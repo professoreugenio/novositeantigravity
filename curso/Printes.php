@@ -398,6 +398,7 @@ $urlAtual = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['H
         <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3 mt-4 flex-wrap gap-3">
             <div>
                 <h3 class="page-title fw-bold mb-1">Área de envio das atividades</h3>
+                
 
                 <div class="mb-4">
                     <nav aria-label="breadcrumb">

@@ -57,7 +57,7 @@
                                     class="bi bi-gear me-2 text-muted"></i> Configurações</a></li>
                         <li><a class="dropdown-item py-2" href="#"><i
                                     class="bi bi-person-lines-fill me-2 text-muted"></i> Afiliados</a></li>
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-whatsapp me-2 text-muted"></i>
+                        <li><a class="dropdown-item py-2" href="<?= $linkWhatsapp?>"><i class="bi bi-whatsapp me-2 text-muted"></i>
                                 WhatsApp</a></li>
                         <li><a class="dropdown-item py-2" href="#"><i class="bi bi-chat-dots me-2 text-muted"></i> Bate
                                 papo</a></li>

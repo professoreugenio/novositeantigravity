@@ -24,7 +24,7 @@ require_once COMPONENTES_ROOT . '/v1/class.conexao.php';
 require_once COMPONENTES_ROOT . '/v1/autenticacao.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryCurso.php';
-
+$percentualCurso = isset($percentualCurso) ? (int)$percentualCurso : 0;
 // --- Lógica Dinâmica ---
 $activeModulo = $_SESSION['dadosmodulo'] ?? 0;
 $activeModulo = (int)encrypt_secure($activeModulo,'d');

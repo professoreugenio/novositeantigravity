@@ -415,7 +415,7 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                     <li class="breadcrumb-item active" aria-current="page"><?= $ModuloNome ?></li>
                 </ol>
             </nav>
-            <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div>
+            <!-- <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div> -->
         </div>
         <div class="row g-4" id="publicacao">
             <!-- Coluna Esquerda: Vídeo e Ações (col-lg-4) -->

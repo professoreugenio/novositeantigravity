@@ -9,9 +9,10 @@ define('APP_ROOT', dirname(__DIR__, 2));
 define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
 date_default_timezone_set('America/Fortaleza');
 header('Content-Type: text/html; charset=utf-8');
+define('SESSION_TTL', 60 * 60 * 5); // 5 horas
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_set_cookie_params([
-        'lifetime' => 0,
+        'lifetime' => SESSION_TTL,
         'path' => '/',
         'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
         'httponly' => true,

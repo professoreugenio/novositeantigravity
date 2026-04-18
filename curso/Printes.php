@@ -10,9 +10,10 @@ define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
 date_default_timezone_set('America/Fortaleza');
 header('Content-Type: text/html; charset=utf-8');
 
+define('SESSION_TTL', 60 * 60 * 5); // 5 horas
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_set_cookie_params([
-        'lifetime' => 0,
+        'lifetime' => SESSION_TTL,
         'path' => '/',
         'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
         'httponly' => true,
@@ -226,7 +227,7 @@ $urlAtual = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['H
             background: rgba(0, 0, 0, .015);
         }
 
-        
+
 
         .comments-wrap {
             padding: 14px;
@@ -398,7 +399,7 @@ $urlAtual = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['H
         <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3 mt-4 flex-wrap gap-3">
             <div>
                 <h3 class="page-title fw-bold mb-1">Área de envio das atividades</h3>
-                
+
 
                 <div class="mb-4">
                     <nav aria-label="breadcrumb">

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1)
-;
+
+declare(strict_types=1);
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
 // ✅ pasta acima do public_html (ex.: /home/usuario)
@@ -9,9 +9,10 @@ define('RAIZ_ROOT', dirname(__DIR__, 1));
 define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
 date_default_timezone_set('America/Fortaleza');
 header('Content-Type: text/html; charset=utf-8');
+define('SESSION_TTL', 60 * 60 * 5); // 5 horas
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_set_cookie_params([
-        'lifetime' => 0,
+        'lifetime' => SESSION_TTL,
         'path' => '/',
         'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
         'httponly' => true,
@@ -24,10 +25,11 @@ require_once COMPONENTES_ROOT . '/v1/class.conexao.php';
 require_once COMPONENTES_ROOT . '/v1/autenticacao.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryCurso.php';
+
 $percentualCurso = isset($percentualCurso) ? (int)$percentualCurso : 0;
 // --- Lógica Dinâmica ---
 $activeModulo = $_SESSION['dadosmodulo'] ?? 0;
-$activeModulo = (int)encrypt_secure($activeModulo,'d');
+$activeModulo = (int)encrypt_secure($activeModulo, 'd');
 $activeDia = isset($_SESSION['dadosdia']) ? (int) $_SESSION['dadosdia'] : 1;
 
 $modulosData = [];
@@ -42,7 +44,7 @@ try {
     $stmtModulos->execute();
     while ($row = $stmtModulos->fetch(PDO::FETCH_ASSOC)) {
         $modId = (int)$row['codigomodulos'];
-        
+
         $stmtTotMod = $con->prepare("
             SELECT COUNT(*) as tot 
             FROM a_aluno_publicacoes_cursos 
@@ -51,7 +53,7 @@ try {
         $stmtTotMod->bindValue(':idMod', $modId, PDO::PARAM_INT);
         $stmtTotMod->execute();
         $totMod = (int)($stmtTotMod->fetch(PDO::FETCH_ASSOC)['tot'] ?? 0);
-        
+
         $stmtAssisMod = $con->prepare("
             SELECT COUNT(DISTINCT idpublicaa) as ass 
             FROM a_aluno_andamento_aula 
@@ -63,10 +65,10 @@ try {
         $stmtAssisMod->bindValue(':idUser', $codigoUser, PDO::PARAM_INT);
         $stmtAssisMod->execute();
         $assisMod = (int)($stmtAssisMod->fetch(PDO::FETCH_ASSOC)['ass'] ?? 0);
-        
+
         $percMod = $totMod > 0 ? round(($assisMod / $totMod) * 100) : 0;
-        if($percMod > 100) $percMod = 100;
-        
+        if ($percMod > 100) $percMod = 100;
+
         $modulosData[] = [
             'id' => $modId,
             'nome' => $row['nomemodulo'],
@@ -76,7 +78,7 @@ try {
             'perc' => $percMod
         ];
     }
-    
+
     if ($activeModulo == 0 && count($modulosData) > 0) {
         $stmtLastMod = $con->prepare("
             SELECT idmoduloaa FROM a_aluno_andamento_aula
@@ -95,7 +97,8 @@ try {
             $activeModulo = $modulosData[0]['id'];
         }
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 $activeModuloNome = 'Sem Módulos';
 foreach ($modulosData as $m) {
@@ -130,7 +133,7 @@ try {
         $stmtDias->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
         $stmtDias->bindValue(':idUser', $codigoUser, PDO::PARAM_INT);
         $stmtDias->bindValue(':idTurma', $idTurma, PDO::PARAM_STR);
-        
+
         $stmtDias->execute();
         while ($row = $stmtDias->fetch(PDO::FETCH_ASSOC)) {
             $diasData[] = [
@@ -138,12 +141,13 @@ try {
                 'tem_pendente' => ((int)$row['tot_aulas'] > (int)$row['assistidas'])
             ];
         }
-        
+
         if ($activeDia === 0 && count($diasData) > 0) {
             $activeDia = $diasData[0]['dia'];
         }
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 $aulasData = [];
 try {
@@ -173,7 +177,8 @@ try {
             $aulasData[] = $row;
         }
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
@@ -216,7 +221,7 @@ try {
                         <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span> - <?= $idCurso ?> <?= $idTurma ?>
                 </div>
                 <h3 class="fw-bold mb-1 text-body-emphasis"><?= $nomeTurma ?> </h3>
-               <div><?php echo encrypt_secure($_COOKIE['registraacesso'],'d');  ?></div>
+                <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div>
                 <?php if (!empty($userTempoRestante)): ?>
                     <div id="count-temporestante"
                         class="text-muted small border bg-white rounded-pill px-2 py-1 shadow-sm mt-3 d-inline-block">
@@ -258,9 +263,9 @@ try {
             <!-- Sidebar: Modules -->
             <div class="col-12 col-lg-4">
                 <div class="card bg-body border-0 shadow-sm rounded-4">
-                    <div id="head-modulos-do-curso" class="card-header bg-transparent border-bottom-0 pt-4 pb-2 px-4" >
-                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2" >
-                            <i class="bi bi-layers text-primary"></i> Módulos do Curso <?=$activeModulo;?>
+                    <div id="head-modulos-do-curso" class="card-header bg-transparent border-bottom-0 pt-4 pb-2 px-4">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-layers text-primary"></i> Módulos do Curso <?= $activeModulo; ?>
                         </h5>
                     </div>
                     <div class="card-body p-0" id="list-modulos">
@@ -268,11 +273,11 @@ try {
                             <div class="p-4 text-center text-muted small">Nenhum módulo disponível.</div>
                             <div class="p-4 text-center text-muted small"><?= $idCurso ?></div>
                         <?php else: ?>
-                            <?php foreach ($modulosData as $idx => $mod): 
+                            <?php foreach ($modulosData as $idx => $mod):
                                 $isActive = ($mod['id'] == $activeModulo);
                                 $bgColorStyle = $isActive ? "background: linear-gradient(90deg, rgb(62 135 177 / 11%) 0%, rgb(230 132 235 / 15%) 100%);" : "";
                                 $borderClass = $isActive ? "border-start border-4 border-primary position-relative" : "border-bottom";
-                                
+
                                 $colorClass = 'text-success';
                                 $bgProgressClass = 'bg-success';
                                 if ($mod['perc'] < 36) {
@@ -286,24 +291,24 @@ try {
                                     $bgProgressClass = 'bg-primary';
                                 }
                             ?>
-                            <?php
-                            $encMdl = encrypt_secure($mod['id'],'e');
-                           
-                            ?>
-                            <a href="action.php?tokemModulo=<?= time();?>&modulo=<?= urlencode($encMdl); ?>&dia=1" class="text-decoration-none text-reset d-block <?= $borderClass ?>" style="<?= $bgColorStyle ?>">
-                                <div class="p-4 <?= !$isActive && $mod['perc'] === 0 ? 'opacity-75' : '' ?>">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <h6 class="fw-bold mb-0"><?= htmlspecialchars((string)$mod['nome']) ?> | <?= $mod['id']?> <?=$activeModulo;?> </h6>
-                                        <span class="small fw-bold <?= $colorClass ?>"><?= $mod['perc'] ?>%</span>
+                                <?php
+                                $encMdl = encrypt_secure($mod['id'], 'e');
+
+                                ?>
+                                <a href="action.php?tokemModulo=<?= time(); ?>&modulo=<?= urlencode($encMdl); ?>&dia=1" class="text-decoration-none text-reset d-block <?= $borderClass ?>" style="<?= $bgColorStyle ?>">
+                                    <div class="p-4 <?= !$isActive && $mod['perc'] === 0 ? 'opacity-75' : '' ?>">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="fw-bold mb-0"><?= htmlspecialchars((string)$mod['nome']) ?> | <?= $mod['id'] ?> <?= $activeModulo; ?> </h6>
+                                            <span class="small fw-bold <?= $colorClass ?>"><?= $mod['perc'] ?>%</span>
+                                        </div>
+
+                                        <div class="progress mb-2" style="height: 6px;">
+                                            <div class="progress-bar <?= $bgProgressClass ?>" role="progressbar" style="width: <?= $mod['perc'] ?>%"
+                                                aria-valuenow="<?= $mod['perc'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="text-muted" style="font-size: 0.75rem;"><?= $mod['tot'] ?> aulas</div>
                                     </div>
-                                    
-                                    <div class="progress mb-2" style="height: 6px;">
-                                        <div class="progress-bar <?= $bgProgressClass ?>" role="progressbar" style="width: <?= $mod['perc'] ?>%"
-                                            aria-valuenow="<?= $mod['perc'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="text-muted" style="font-size: 0.75rem;"><?= $mod['tot'] ?> aulas</div>
-                                </div>
-                            </a>
+                                </a>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
@@ -313,7 +318,7 @@ try {
             <!-- Main Content: Search and Lessons -->
             <div class="col-12 col-lg-8">
                 <!-- Search Box -->
-                
+
 
                 <!-- Schedule by Day -->
                 <div id="list-dias" class="card bg-body border-0 shadow-sm rounded-4 mb-4">
@@ -321,15 +326,15 @@ try {
                         <h6 class="text-muted fw-bold mb-3 text-uppercase"
                             style="font-size: 0.8rem; letter-spacing: 0.5px;">Programação por Dia <i class="bi bi-calendar-event"></i>
                             <?= $activeModulo ?>
-                        
+
                         </h6>
                         <div class="d-flex flex-wrap gap-2">
                             <?php if (empty($diasData)): ?>
                                 <span class="text-muted small">Sem programação disponível.</span> <?= $activeModulo ?>
                             <?php else: ?>
-                                <?php foreach ($diasData as $diaInfo): 
+                                <?php foreach ($diasData as $diaInfo):
                                     $diaValue = $diaInfo['dia'];
-                                     $isActiveDia = ($diaValue === $activeDia);
+                                    $isActiveDia = ($diaValue === $activeDia);
                                     if ($isActiveDia) {
                                         $btnClass = "btn btn-primary rounded-pill px-3 py-1 fw-medium d-flex align-items-center gap-2 position-relative border-0 shadow-sm";
                                         $btnStyle = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;";
@@ -337,18 +342,18 @@ try {
                                         $btnClass = "btn btn-day-inactive rounded-pill px-3 py-1 fw-medium d-flex align-items-center gap-2 shadow-sm position-relative border";
                                         $btnStyle = "";
                                     }
-                                    $encActiveMdl = encrypt_secure($activeModulo,'e');
+                                    $encActiveMdl = encrypt_secure($activeModulo, 'e');
                                 ?>
-                                <a id="btn-dia" href="action.php?tokemModulo=<?= time();?>&modulo=<?= urlencode($encActiveMdl) ?>&dia=<?= $diaValue ?>" class="<?= $btnClass ?>" style="<?= $btnStyle ?>">
-                                    <?= $diaValue ?>º
-                                    <?php if ($diaInfo['tem_pendente']): ?>
-                                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle" title="Lições não vistas neste dia">
-                                            <span class="visually-hidden">Lições não vistas</span>
-                                        </span>
-                                    <?php endif; ?>
-                                </a>
+                                    <a id="btn-dia" href="action.php?tokemModulo=<?= time(); ?>&modulo=<?= urlencode($encActiveMdl) ?>&dia=<?= $diaValue ?>" class="<?= $btnClass ?>" style="<?= $btnStyle ?>">
+                                        <?= $diaValue ?>º
+                                        <?php if ($diaInfo['tem_pendente']): ?>
+                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle" title="Lições não vistas neste dia">
+                                                <span class="visually-hidden">Lições não vistas</span>
+                                            </span>
+                                        <?php endif; ?>
+                                    </a>
 
-                              
+
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
@@ -368,14 +373,14 @@ try {
                         <?php if (empty($aulasData)): ?>
                             <div class="p-4 text-center text-muted small">Nenhuma aula disponível.</div>
                         <?php else: ?>
-                            <?php foreach ($aulasData as $idx => $aula): 
+                            <?php foreach ($aulasData as $idx => $aula):
                                 $temVideoaula = !empty($aula['tem_videoaula']);
                                 $temYoutube = !empty($aula['tem_youtube']);
                                 $temQuest = !empty($aula['tem_questionario']);
                                 $questResp = !empty($aula['quest_respondido']);
-                                
+
                                 $jaAssistiu = !empty($aula['assistido']);
-                                
+
                                 $isQuestionarioPrimary = ($temQuest && !$temVideoaula && !$temYoutube);
                                 $jaConcluiu = $isQuestionarioPrimary ? $questResp : $jaAssistiu;
 
@@ -383,56 +388,56 @@ try {
                                     $itemBaseClass = "d-flex align-items-center p-3 px-4 border-bottom bg-body lesson-item-concluido";
                                     $itemHoverClass = "d-flex align-items-center p-3 px-4 border-bottom bg-body-secondary lesson-item-concluido";
                                     $itemStyle = "cursor: pointer;";
-                                    
+
                                     $checkIconClass = "bi-check-lg text-success";
                                     $checkBgClass = "rounded-circle d-flex align-items-center justify-content-center me-3 bg-success bg-opacity-10";
                                     $checkStyle = "width: 40px; height: 40px; min-width: 40px;";
-                                    
+
                                     $iconeStatusRight = "text-success";
                                 } else {
                                     $itemBaseClass = "d-flex align-items-center p-3 px-4 border-bottom bg-warning bg-opacity-10 lesson-item-pendente";
                                     $itemHoverClass = "d-flex align-items-center p-3 px-4 border-bottom bg-warning bg-opacity-25 shadow-sm lesson-item-pendente";
                                     $itemStyle = "cursor: pointer;";
-                                    
+
                                     $checkIconClass = "bi-play-fill text-warning";
                                     $checkBgClass = "rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm bg-body";
                                     $checkStyle = "width: 40px; height: 40px; min-width: 40px;";
-                                    
+
                                     $iconeStatusRight = "text-muted";
                                 }
                             ?>
-                            <div id="item-listaaulas-<?= $idx ?>" class="<?= $itemBaseClass ?>" style="<?= $itemStyle ?>"
-                                onmouseover="this.className='<?= $itemHoverClass ?>'"
-                                onmouseout="this.className='<?= $itemBaseClass ?>'">
-                                <div class="<?= $checkBgClass ?>" style="<?= $checkStyle ?>">
-                                    <i class="bi <?= $checkIconClass ?> fs-4"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <?php
-                                    $encIdPub = encrypt_secure($aula['codigopublicacoes'], 'e');
-                                    $encModulo = encrypt_secure($activeModulo, 'e');
-                                    ?>
-                                    <a href="action.php?tokemPublicacao=<?= time();?>&publicacao=<?= urlencode($encIdPub) ?>&modulo=<?= urlencode($encModulo); ?>" class="text-decoration-none d-block text-body">
-                                        <h6 class="fw-bold mb-0 text-body-emphasis" style="font-size: 1.05rem;"><?= ($idx + 1) ?>. <?= htmlspecialchars($aula['titulo']) ?></h6>
-                                        <div class="text-secondary mt-1" style="font-size: 0.85rem; font-weight: 400;"><?= !empty($aula['olho']) ? htmlspecialchars((string)$aula['olho']) : 'Aula ' . ($idx + 1) ?></div>
-                                    </a>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 ms-3 icones_licao">
-                                    <div class="d-flex gap-2 align-items-center ms-2">
-                                        <?php if ($temVideoaula || $temYoutube): ?>
-                                            <i class="bi bi-camera-video-fill fs-5 <?= $iconeStatusRight ?>" title="Vídeoaula"></i>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($temQuest): ?>
-                                            <i class="bi bi-card-checklist fs-5 <?= $iconeStatusRight ?>" title="Questionário"></i>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($jaConcluiu): ?>
-                                            <i class="bi bi-check-circle-fill text-success fs-5 ms-1" title="Concluído"></i>
-                                        <?php endif; ?>
+                                <div id="item-listaaulas-<?= $idx ?>" class="<?= $itemBaseClass ?>" style="<?= $itemStyle ?>"
+                                    onmouseover="this.className='<?= $itemHoverClass ?>'"
+                                    onmouseout="this.className='<?= $itemBaseClass ?>'">
+                                    <div class="<?= $checkBgClass ?>" style="<?= $checkStyle ?>">
+                                        <i class="bi <?= $checkIconClass ?> fs-4"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <?php
+                                        $encIdPub = encrypt_secure($aula['codigopublicacoes'], 'e');
+                                        $encModulo = encrypt_secure($activeModulo, 'e');
+                                        ?>
+                                        <a href="action.php?tokemPublicacao=<?= time(); ?>&publicacao=<?= urlencode($encIdPub) ?>&modulo=<?= urlencode($encModulo); ?>" class="text-decoration-none d-block text-body">
+                                            <h6 class="fw-bold mb-0 text-body-emphasis" style="font-size: 1.05rem;"><?= ($idx + 1) ?>. <?= htmlspecialchars($aula['titulo']) ?></h6>
+                                            <div class="text-secondary mt-1" style="font-size: 0.85rem; font-weight: 400;"><?= !empty($aula['olho']) ? htmlspecialchars((string)$aula['olho']) : 'Aula ' . ($idx + 1) ?></div>
+                                        </a>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 ms-3 icones_licao">
+                                        <div class="d-flex gap-2 align-items-center ms-2">
+                                            <?php if ($temVideoaula || $temYoutube): ?>
+                                                <i class="bi bi-camera-video-fill fs-5 <?= $iconeStatusRight ?>" title="Vídeoaula"></i>
+                                            <?php endif; ?>
+
+                                            <?php if ($temQuest): ?>
+                                                <i class="bi bi-card-checklist fs-5 <?= $iconeStatusRight ?>" title="Questionário"></i>
+                                            <?php endif; ?>
+
+                                            <?php if ($jaConcluiu): ?>
+                                                <i class="bi bi-check-circle-fill text-success fs-5 ms-1" title="Concluído"></i>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>

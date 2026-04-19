@@ -1,28 +1,6 @@
 <?php
 
-declare(strict_types=1);
-define('BASEPATH', true);
-define('PUBLIC_ROOT', __DIR__);
-// ✅ pasta acima do public_html (ex.: /home/usuario)
-define('APP_ROOT', dirname(__DIR__, 2));
-define('RAIZ_ROOT', dirname(__DIR__, 1));
-define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
-date_default_timezone_set('America/Fortaleza');
-header('Content-Type: text/html; charset=utf-8');
-define('SESSION_TTL', 60 * 60 * 5); // 5 horas
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_set_cookie_params([
-        'lifetime' => SESSION_TTL,
-        'path' => '/',
-        'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    session_start();
-}
-
-require_once COMPONENTES_ROOT . '/v1/class.conexao.php';
-require_once COMPONENTES_ROOT . '/v1/autenticacao.php';
+require_once 'componentes/v1/Query_head.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryCurso.php';
 
@@ -218,10 +196,10 @@ try {
                     <a href="index.php" class="text-decoration-none text-muted hover-primary">Meus Cursos</a>
                     <i class="bi bi-chevron-right mx-2" style="font-size: 0.75rem;"></i>
                     <span class="text-muted" title="<?= htmlspecialchars($nomeCurso) ?>">
-                        <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span> - <?= $idCurso ?> <?= $idTurma ?>
+                        <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span> 
                 </div>
                 <h3 class="fw-bold mb-1 text-body-emphasis"><?= $nomeTurma ?> </h3>
-                <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div>
+                <!-- <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div> -->
                 <?php if (!empty($userTempoRestante)): ?>
                     <div id="count-temporestante"
                         class="text-muted small border bg-white rounded-pill px-2 py-1 shadow-sm mt-3 d-inline-block">

@@ -1,26 +1,6 @@
 <?php
 
-declare(strict_types=1);
-define('BASEPATH', true);
-define('PUBLIC_ROOT', __DIR__);
-define('RAIZ_ROOT', dirname(__DIR__, 1));
-// ✅ pasta acima do public_html (ex.: /home/usuario)
-define('APP_ROOT', dirname(__DIR__, 2));
-define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
-date_default_timezone_set('America/Fortaleza');
-header('Content-Type: text/html; charset=utf-8');
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_set_cookie_params([
-        'lifetime' => 0,
-        'path' => '/',
-        'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    session_start();
-}
-require_once COMPONENTES_ROOT . '/v1/class.conexao.php';
-require_once COMPONENTES_ROOT . '/v1/autenticacao.php';
+require_once 'componentes/v1/Query_head.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 
 if (isset($_SESSION['dadosmodulo'])) {
@@ -61,7 +41,7 @@ if (isset($_SESSION['dadosdia'])) {
                 <h1 class="fw-bold mb-1">Meus Cursos </h1>
                 <p class="text-muted mb-0">Último acesso: <?= $ultimadata ?? 'sem registros' ?> <?= $codigoUser ?> Continue
                     de onde você parou e alcance seus objetivos.</p>
-                <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div>
+                <!-- <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div> -->
             </div>
             <div class="text-muted small border bg-white rounded-pill px-3 py-1 shadow-sm">
                 <?php echo $userTempoRestante; ?>
@@ -85,7 +65,7 @@ if (isset($_SESSION['dadosdia'])) {
                         c.bgcolor,
                         t.nometurma,
                         t.codigoturma,
-                        (SELECT mfp.foto FROM new_sistema_midias_fotos_PJA mfp WHERE mfp.pasta = c.pasta LIMIT 1) as foto
+                        (SELECT mfp.foto FROM new_sistema_midias_fotos_PJA mfp WHERE mfp.pasta = c.pasta AND mfp.tipo = '3' LIMIT 1) as foto
                     FROM new_sistema_inscricao_PJA i
                     INNER JOIN new_sistema_cursos_turmas t ON i.chaveturma = t.chave
                     INNER JOIN new_sistema_cursos c ON t.codcursost = c.codigocursos

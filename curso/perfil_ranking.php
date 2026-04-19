@@ -117,8 +117,8 @@ if ($pastasc !== '' && $imagem50 !== '') {
                         <li class="breadcrumb-item active" aria-current="page">Ranking</li>
                     </ol>
                 </nav>
-                
-               
+
+
                 <p class="text-muted mb-0">Veja seu desempenho no ranking e compare-se com outros usuários.</p>
             </div>
             <div>
@@ -130,49 +130,7 @@ if ($pastasc !== '' && $imagem50 !== '') {
 
         <div class="row g-4" id="configuracoes">
 
-            <div class="col-lg-3">
-                <div class="perfil-menu-lateral">
-                    <div class="perfil-menu-titulo">Meu Perfil</div>
-
-                    <div class="d-grid gap-2">
-                        <a href="perfil_Configuracoes.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_Configuracoes.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-person-gear"></i></span>
-                            <span>Editar Perfil</span>
-                        </a>
-
-                        <a href="perfil_fotos.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_fotos.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-image"></i></span>
-                            <span>Atualizar foto</span>
-                        </a>
-
-                        <a href="perfil_redessociais.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_redessociais.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-share"></i></span>
-                            <span>Redes sociais</span>
-                        </a>
-
-                        <a href="perfil_ranking.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_ranking.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-trophy"></i></span>
-                            <span>Meu Ranking</span>
-                        </a>
-
-                        <a href="perfil_mascote.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_mascote.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-emoji-smile"></i></span>
-                            <span>Mascote</span>
-                        </a>
-
-                        <a href="perfil_termos.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_termos.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-file-text"></i></span>
-                            <span>Termos do site</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <?php require 'componentes/v1/nav_perfil.php' ?>
 
             <div class="col-lg-9">
                 <div class="card border-0 shadow-sm rounded-4 custom-card p-4 p-md-5 bg-body mb-4">
@@ -207,181 +165,7 @@ if ($pastasc !== '' && $imagem50 !== '') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        const toggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.querySelector('.sun-icon');
-        const moonIcon = document.querySelector('.moon-icon');
-        const htmlElement = document.documentElement;
-
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        htmlElement.setAttribute('data-bs-theme', savedTheme);
-
-        if (savedTheme === 'dark' && sunIcon && moonIcon) {
-            sunIcon.classList.add('d-none');
-            moonIcon.classList.remove('d-none');
-        }
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-bs-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-                htmlElement.setAttribute('data-bs-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-
-                if (newTheme === 'dark') {
-                    if (sunIcon) sunIcon.classList.add('d-none');
-                    if (moonIcon) moonIcon.classList.remove('d-none');
-                } else {
-                    if (sunIcon) sunIcon.classList.remove('d-none');
-                    if (moonIcon) moonIcon.classList.add('d-none');
-                }
-            });
-        }
-
-        function mostrarToast(msg, sucesso = true) {
-            const el = document.getElementById('toastMsg');
-            const body = document.getElementById('toastMsgBody');
-
-            el.classList.remove('text-bg-dark', 'text-bg-success', 'text-bg-danger');
-            el.classList.add(sucesso ? 'text-bg-success' : 'text-bg-danger');
-            body.textContent = msg;
-
-            const toast = new bootstrap.Toast(el, {
-                delay: 4500
-            });
-            toast.show();
-        }
-
-        function setLoading(btn, status) {
-            const spinner = btn.querySelector('.spinner-border');
-            const label = btn.querySelector('.label-btn');
-
-            btn.disabled = status;
-
-            if (status) {
-                spinner.classList.remove('d-none');
-                label.classList.add('d-none');
-            } else {
-                spinner.classList.add('d-none');
-                label.classList.remove('d-none');
-            }
-        }
-
-        const formUploadFoto = document.getElementById('formUploadFoto');
-        const inputFoto = document.getElementById('fotoPerfil');
-        const btnEnviarFoto = document.getElementById('btnEnviarFoto');
-        const btnResetFoto = document.getElementById('btnResetFoto');
-        const boxPreviewNova = document.getElementById('boxPreviewNova');
-        const previewNovaFoto = document.getElementById('previewNovaFoto');
-        const boxProgresso = document.getElementById('boxProgresso');
-        const barraUpload = document.getElementById('barraUpload');
-        const textoPercentual = document.getElementById('textoPercentual');
-        const fotoAtualGrande = document.getElementById('fotoAtualGrande');
-        const fotoAtualMini = document.getElementById('fotoAtualMini');
-
-        inputFoto.addEventListener('change', function() {
-            const file = this.files && this.files[0] ? this.files[0] : null;
-
-            if (!file) {
-                boxPreviewNova.classList.add('d-none');
-                previewNovaFoto.src = '/img/usuario.jpg';
-                return;
-            }
-
-            const permitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-            if (!permitidos.includes(file.type)) {
-                this.value = '';
-                boxPreviewNova.classList.add('d-none');
-                mostrarToast('Selecione uma imagem JPG, PNG, WEBP ou GIF.', false);
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewNovaFoto.src = e.target.result;
-                boxPreviewNova.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        });
-
-        btnResetFoto.addEventListener('click', function() {
-            boxPreviewNova.classList.add('d-none');
-            boxProgresso.classList.add('d-none');
-            barraUpload.style.width = '0%';
-            barraUpload.setAttribute('aria-valuenow', '0');
-            textoPercentual.textContent = '0%';
-            previewNovaFoto.src = '/img/usuario.jpg';
-        });
-
-        formUploadFoto.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const file = inputFoto.files && inputFoto.files[0] ? inputFoto.files[0] : null;
-            if (!file) {
-                mostrarToast('Selecione uma imagem antes de enviar.', false);
-                return;
-            }
-
-            const formData = new FormData(formUploadFoto);
-            const xhr = new XMLHttpRequest();
-
-            xhr.open('POST', 'componentes/v1/ajax_perfilFotoUpload.php', true);
-            xhr.responseType = 'json';
-
-            xhr.upload.addEventListener('progress', function(event) {
-                if (event.lengthComputable) {
-                    const percent = Math.round((event.loaded / event.total) * 100);
-                    boxProgresso.classList.remove('d-none');
-                    barraUpload.style.width = percent + '%';
-                    barraUpload.setAttribute('aria-valuenow', String(percent));
-                    textoPercentual.textContent = percent + '%';
-                }
-            });
-
-            xhr.onloadstart = function() {
-                setLoading(btnEnviarFoto, true);
-                boxProgresso.classList.remove('d-none');
-                barraUpload.style.width = '0%';
-                textoPercentual.textContent = '0%';
-            };
-
-            xhr.onerror = function() {
-                setLoading(btnEnviarFoto, false);
-                mostrarToast('Erro de comunicação ao enviar a imagem.', false);
-            };
-
-            xhr.onload = function() {
-                setLoading(btnEnviarFoto, false);
-
-                const data = xhr.response || {};
-
-                if (xhr.status !== 200 || !data.status) {
-                    mostrarToast(data.msg || 'Não foi possível atualizar a foto.', false);
-                    return;
-                }
-
-                barraUpload.style.width = '100%';
-                textoPercentual.textContent = '100%';
-
-                const cache = '?v=' + Date.now();
-
-                if (data.url_imagem200) {
-                    fotoAtualGrande.src = data.url_imagem200 + cache;
-                }
-
-                if (data.url_imagem50) {
-                    fotoAtualMini.src = data.url_imagem50 + cache;
-                }
-
-                mostrarToast(data.msg || 'Foto atualizada com sucesso.', true);
-                formUploadFoto.reset();
-                boxPreviewNova.classList.add('d-none');
-            };
-
-            xhr.send(formData);
-        });
-    </script>
+    <script src="../assets/js/temaToggle.js"></script>
 </body>
 
 </html>

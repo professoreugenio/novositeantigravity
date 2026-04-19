@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
@@ -108,7 +109,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
                         <li class="breadcrumb-item active" aria-current="page">Configurações</li>
                     </ol>
                 </nav>
-                
+
                 <p class="text-muted mb-0">Gerencie suas informações pessoais e os dados de sua conta.</p>
             </div>
             <div>
@@ -120,49 +121,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
 
         <div class="row g-4" id="configuracoes">
 
-            <div class="col-lg-3">
-                <div class="perfil-menu-lateral">
-                    <div class="perfil-menu-titulo">Meu Perfil</div>
-
-                    <div class="d-grid gap-2">
-                        <a href="perfil_Configuracoes.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_Configuracoes.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-person-gear"></i></span>
-                            <span>Editar Perfil</span>
-                        </a>
-
-                        <a href="perfil_fotos.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_fotos.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-image"></i></span>
-                            <span>Atualizar foto</span>
-                        </a>
-
-                        <a href="perfil_redessociais.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_redessociais.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-share"></i></span>
-                            <span>Redes sociais</span>
-                        </a>
-
-                        <a href="perfil_ranking.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_ranking.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-trophy"></i></span>
-                            <span>Meu Ranking</span>
-                        </a>
-
-                        <a href="perfil_mascote.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_mascote.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-emoji-smile"></i></span>
-                            <span>Mascote</span>
-                        </a>
-
-                        <a href="perfil_termos.php"
-                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_termos.php' ? 'active' : '' ?>">
-                            <span class="perfil-menu-icone"><i class="bi bi-file-text"></i></span>
-                            <span>Termos do site</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <?php require 'componentes/v1/nav_perfil.php' ?>
 
             <div class="col-lg-9">
                 <div class="card border-0 shadow-sm rounded-4 custom-card p-4 p-md-5 bg-body mb-4">
@@ -377,7 +336,9 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
             el.classList.add(sucesso ? 'text-bg-success' : 'text-bg-danger');
             body.textContent = msg;
 
-            const toast = new bootstrap.Toast(el, { delay: 4000 });
+            const toast = new bootstrap.Toast(el, {
+                delay: 4000
+            });
             toast.show();
         }
 
@@ -397,7 +358,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
         }
 
         document.querySelectorAll('[data-toggle-password]').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function() {
                 const target = document.querySelector(this.getAttribute('data-toggle-password'));
                 const icon = this.querySelector('i');
 
@@ -415,7 +376,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
 
         const celular = document.getElementById('celular');
         if (celular) {
-            celular.addEventListener('input', function (e) {
+            celular.addEventListener('input', function(e) {
                 let v = e.target.value.replace(/\D/g, '').slice(0, 11);
 
                 if (v.length > 10) {
@@ -435,7 +396,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
         const formConfiguracoes = document.getElementById('formConfiguracoes');
         const btnSalvarConfig = document.getElementById('btnSalvarConfig');
 
-        formConfiguracoes.addEventListener('submit', async function (e) {
+        formConfiguracoes.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const email = document.getElementById('email').value.trim();
@@ -487,4 +448,5 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
         });
     </script>
 </body>
+
 </html>

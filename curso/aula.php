@@ -380,6 +380,48 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
             border-color: #374151;
         }
     </style>
+
+    <?php
+
+    $totalPontuacaoUsuario = 0;
+
+    try {
+        $codigoUserPontuacao = 0;
+        $idCursoPontuacao    = 0;
+        $idTurmaPontuacao    = '';
+
+        $Decdadosuser = encrypt_secure($_SESSION['startusuario'] ?? '', 'd');
+        if (is_string($Decdadosuser) && strpos($Decdadosuser, '&') !== false) {
+            $dadosArray = explode('&', $Decdadosuser);
+            $codigoUserPontuacao = isset($dadosArray[0]) ? (int)$dadosArray[0] : 0;
+        }
+
+        $Decdadoscurso = encrypt_secure($_SESSION['dadoscurso'] ?? '', 'd');
+        if (is_string($Decdadoscurso) && strpos($Decdadoscurso, '&') !== false) {
+            $dadosArray = explode('&', $Decdadoscurso);
+            $idCursoPontuacao = isset($dadosArray[0]) ? (int)$dadosArray[0] : 0;
+            $idTurmaPontuacao = isset($dadosArray[1]) ? trim((string)$dadosArray[1]) : '';
+        }
+
+        if ($codigoUserPontuacao > 0 && $idCursoPontuacao > 0 && $idTurmaPontuacao !== '') {
+            $stmtPontuacao = $con->prepare("
+            SELECT COALESCE(SUM(pontos_cp), 0) AS total_pontos
+            FROM a_curso_pontuacao
+            WHERE idusuario_cp = :idusuario
+              AND idcurso_cp   = :idcurso
+              AND idturma_cp   = :idturma
+        ");
+            $stmtPontuacao->bindValue(':idusuario', $codigoUserPontuacao, PDO::PARAM_INT);
+            $stmtPontuacao->bindValue(':idcurso', $idCursoPontuacao, PDO::PARAM_INT);
+            $stmtPontuacao->bindValue(':idturma', $idTurmaPontuacao, PDO::PARAM_STR);
+            $stmtPontuacao->execute();
+
+            $totalPontuacaoUsuario = (int)($stmtPontuacao->fetch(PDO::FETCH_ASSOC)['total_pontos'] ?? 0);
+        }
+    } catch (Throwable $e) {
+        $totalPontuacaoUsuario = 0;
+    }
+    ?>
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
@@ -406,21 +448,49 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                 <!-- Video Card -->
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
                     <div class="card-body p-3 pt-0 pt-2" id="video-aula">
+                        <?php
+                        $youtubeEmbedUrlFinal = '';
+
+                        if ($midiaTipo === 'youtube' && $youtubeEmbedUrl !== '') {
+                            $youtubeEmbedUrlFinal = (string)$youtubeEmbedUrl;
+
+                            if (strpos($youtubeEmbedUrlFinal, 'enablejsapi=1') === false) {
+                                $youtubeEmbedUrlFinal .= (strpos($youtubeEmbedUrlFinal, '?') !== false ? '&' : '?') . 'enablejsapi=1';
+                            }
+
+                            if (strpos($youtubeEmbedUrlFinal, 'origin=') === false && !empty($_SERVER['HTTP_HOST'])) {
+                                $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+                                $origin = $protocolo . $_SERVER['HTTP_HOST'];
+                                $youtubeEmbedUrlFinal .= '&origin=' . rawurlencode($origin);
+                            }
+                        }
+                        ?>
+
                         <div class="ratio ratio-16x9 bg-dark rounded-3 overflow-hidden position-relative">
                             <?php if ($midiaTipo === 'video' && $videoLocalUrl !== ''): ?>
-                                <video class="w-100 h-100 object-fit-cover" controls preload="metadata" playsinline
+                                <video
+                                    id="player-video-aula"
+                                    class="w-100 h-100 object-fit-cover"
+                                    controls
+                                    preload="metadata"
+                                    playsinline
                                     poster="<?= htmlspecialchars($posterVideo) ?>">
                                     <source src="<?= htmlspecialchars($videoLocalUrl) ?>" type="video/mp4">
                                     Seu navegador não suporta reprodução de vídeo.
                                 </video>
-                            <?php elseif ($midiaTipo === 'youtube' && $youtubeEmbedUrl !== ''): ?>
-                                <iframe class="w-100 h-100" src="<?= htmlspecialchars($youtubeEmbedUrl) ?>"
-                                    title="<?= htmlspecialchars((string) ($youtubeAula['titulo_sy'] ?? $PubTitulo ?? 'Vídeo da aula')) ?>"
+
+                            <?php elseif ($midiaTipo === 'youtube' && $youtubeEmbedUrlFinal !== ''): ?>
+                                <iframe
+                                    id="youtube-player-aula"
+                                    class="w-100 h-100"
+                                    src="<?= htmlspecialchars($youtubeEmbedUrlFinal) ?>"
+                                    title="<?= htmlspecialchars((string)($youtubeAula['titulo_sy'] ?? $PubTitulo ?? 'Vídeo da aula')) ?>"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                                    allowfullscreen
+                                    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
                             <?php else: ?>
-                                <div
-                                    class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center p-4">
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center p-4">
                                     <i class="bi bi-camera-video-off fs-1 mb-3 opacity-75"></i>
                                     <div class="fw-semibold">Vídeo ainda não disponível</div>
                                     <small class="opacity-75">Esta aula não possui vídeo cadastrado no momento.</small>
@@ -1464,6 +1534,297 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                     dialog.style.top = Math.min(topAtual, maxTop) + 'px';
                 });
             })();
+        });
+    </script>
+
+    <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2000;">
+        <div id="toastPontuacaoAula" class="toast align-items-center border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastPontuacaoAulaBody" class="toast-body fw-semibold d-flex align-items-center gap-2">
+                    <i class="bi bi-trophy-fill text-warning fs-5"></i>
+                    <span>Você ganhou pontos nesta aula!</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
+    <a href="perfil_ranking.php" id="box-pontuacao-fixa" class="text-decoration-none" title="Ver ranking de pontuação">
+        <div class="icone-trofeu">
+            <i class="bi bi-trophy-fill"></i>
+        </div>
+        <div class="texto-pontos">
+            <span class="label">Pontuação</span>
+            <span class="valor"><?= number_format($totalPontuacaoUsuario, 0, ',', '.') ?></span>
+        </div>
+    </a>
+
+    <script>
+        function atualizarBoxPontuacao(pontosGanhos) {
+            const valorPontuacao = document.querySelector('#box-pontuacao-fixa .valor');
+
+            if (!valorPontuacao) return;
+
+            const textoAtual = (valorPontuacao.textContent || '0').trim();
+            const valorAtual = parseInt(textoAtual.replace(/\./g, ''), 10) || 0;
+            const novoValor = valorAtual + (parseInt(pontosGanhos, 10) || 0);
+
+            valorPontuacao.textContent = novoValor.toLocaleString('pt-BR');
+        }
+
+        function exibirToastPontuacaoAula(mensagem) {
+            const toastEl = document.getElementById('toastPontuacaoAula');
+            const toastBody = document.getElementById('toastPontuacaoAulaBody');
+
+            if (!toastEl || !toastBody) return;
+
+            toastBody.innerHTML = `
+            <i class="bi bi-trophy-fill text-warning fs-5"></i>
+            <span>${mensagem}</span>
+        `;
+
+            const toast = new bootstrap.Toast(toastEl, {
+                delay: 3500
+            });
+
+            toast.show();
+        }
+
+        async function registrarPontuacaoAula() {
+            try {
+                const response = await fetch('componentes/v1/ajax_registraPontuacaoAula.php', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.inserted) {
+                    exibirToastPontuacaoAula(data.message || 'Você ganhou 50 pontos nesta aula!');
+                    atualizarBoxPontuacao(data.pontos || 0);
+                }
+            } catch (error) {
+                console.error('Erro ao registrar pontuação da aula:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            registrarPontuacaoAula();
+        });
+    </script>
+
+    <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2000;">
+        <div id="toastPontuacaoVideo" class="toast align-items-center border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastPontuacaoVideoBody" class="toast-body fw-semibold d-flex align-items-center gap-2">
+                    <i class="bi bi-trophy-fill text-warning fs-5"></i>
+                    <span>Você ganhou 500 pontos!</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let pontuacaoVideoJaEnviada = false;
+        let tempoAssistidoSegundos = 0;
+        let intervaloContadorVideo = null;
+        let ytPlayer = null;
+        let ytMonitorInterval = null;
+
+        function atualizarBoxPontuacao(pontosGanhos) {
+            const valorPontuacao = document.querySelector('#box-pontuacao-fixa .valor');
+            if (!valorPontuacao) return;
+
+            const textoAtual = (valorPontuacao.textContent || '0').trim();
+            const valorAtual = parseInt(textoAtual.replace(/\./g, ''), 10) || 0;
+            const novoValor = valorAtual + (parseInt(pontosGanhos, 10) || 0);
+
+            valorPontuacao.textContent = novoValor.toLocaleString('pt-BR');
+        }
+
+        function exibirToastPontuacaoVideo(mensagem) {
+            const toastEl = document.getElementById('toastPontuacaoVideo');
+            const toastBody = document.getElementById('toastPontuacaoVideoBody');
+
+            if (!toastEl || !toastBody) return;
+
+            toastBody.innerHTML = `
+            <i class="bi bi-trophy-fill text-warning fs-5"></i>
+            <span>${mensagem}</span>
+        `;
+
+            const toast = new bootstrap.Toast(toastEl, {
+                delay: 4000
+            });
+
+            toast.show();
+        }
+
+        async function registrarPontuacaoVideo4Min() {
+            if (pontuacaoVideoJaEnviada) return;
+
+            pontuacaoVideoJaEnviada = true;
+
+            try {
+                const response = await fetch('componentes/v1/ajax_registraPontuacaoVideo4Min.php', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.inserted) {
+                    exibirToastPontuacaoVideo(data.message || 'Parabéns! Você ganhou 500 pontos.');
+                    atualizarBoxPontuacao(data.pontos || 0);
+                    return;
+                }
+
+                if (!data.inserted) {
+                    pontuacaoVideoJaEnviada = true;
+                }
+            } catch (error) {
+                console.error('Erro ao registrar pontuação do vídeo:', error);
+                pontuacaoVideoJaEnviada = false;
+            }
+        }
+
+        function iniciarContadorTempoReal() {
+            if (intervaloContadorVideo || pontuacaoVideoJaEnviada) return;
+
+            intervaloContadorVideo = setInterval(() => {
+                if (document.visibilityState !== 'visible') return;
+
+                tempoAssistidoSegundos++;
+
+                if (tempoAssistidoSegundos >= 240) {
+                    pararContadorTempoReal();
+                    registrarPontuacaoVideo4Min();
+                }
+            }, 1000);
+        }
+
+        function pararContadorTempoReal() {
+            if (intervaloContadorVideo) {
+                clearInterval(intervaloContadorVideo);
+                intervaloContadorVideo = null;
+            }
+        }
+
+        function configurarVideoMP4() {
+            const video = document.querySelector('video');
+
+            if (!video) return;
+
+            video.addEventListener('play', () => {
+                iniciarContadorTempoReal();
+            });
+
+            video.addEventListener('pause', () => {
+                pararContadorTempoReal();
+            });
+
+            video.addEventListener('ended', () => {
+                pararContadorTempoReal();
+            });
+
+            video.addEventListener('waiting', () => {
+                pararContadorTempoReal();
+            });
+
+            video.addEventListener('seeking', () => {
+                pararContadorTempoReal();
+            });
+
+            video.addEventListener('seeked', () => {
+                if (!video.paused && !video.ended) {
+                    iniciarContadorTempoReal();
+                }
+            });
+        }
+
+        function iniciarMonitorYoutube(player) {
+            if (ytMonitorInterval || pontuacaoVideoJaEnviada) return;
+
+            ytMonitorInterval = setInterval(() => {
+                if (document.visibilityState !== 'visible') return;
+
+                const state = player.getPlayerState();
+
+                if (state === YT.PlayerState.PLAYING) {
+                    tempoAssistidoSegundos++;
+
+                    if (tempoAssistidoSegundos >= 240) {
+                        pararMonitorYoutube();
+                        registrarPontuacaoVideo4Min();
+                    }
+                }
+            }, 1000);
+        }
+
+        function pararMonitorYoutube() {
+            if (ytMonitorInterval) {
+                clearInterval(ytMonitorInterval);
+                ytMonitorInterval = null;
+            }
+        }
+
+        function configurarYoutube() {
+            const iframeYoutube = document.querySelector('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
+
+            if (!iframeYoutube) return;
+
+            if (!iframeYoutube.id) {
+                iframeYoutube.id = 'youtube-player-aula';
+            }
+
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+
+            window.onYouTubeIframeAPIReady = function() {
+                ytPlayer = new YT.Player(iframeYoutube.id, {
+                    events: {
+                        'onStateChange': function(event) {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                iniciarMonitorYoutube(ytPlayer);
+                            } else {
+                                pararMonitorYoutube();
+                            }
+                        }
+                    }
+                });
+            };
+        }
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState !== 'visible') {
+                pararContadorTempoReal();
+                pararMonitorYoutube();
+            } else {
+                const video = document.querySelector('video');
+                if (video && !video.paused && !video.ended) {
+                    iniciarContadorTempoReal();
+                }
+
+                if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
+                    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                        iniciarMonitorYoutube(ytPlayer);
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            configurarVideoMP4();
+            configurarYoutube();
         });
     </script>
 </body>

@@ -5,6 +5,32 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryCurso.php';
 
 $percentualCurso = isset($percentualCurso) ? (int)$percentualCurso : 0;
+
+$userCod = isset($codigoUser) ? (int)$codigoUser : (isset($userCod) ? (int)$userCod : 0);
+$idCurso = isset($idCurso) ? (int)$idCurso : 0;
+$idTurma = isset($idTurma) ? trim((string)$idTurma) : '';
+
+$totalPontuacaoUsuario = 0;
+
+try {
+    if ($userCod > 0 && $idCurso > 0 && $idTurma !== '') {
+        $stmtPontuacao = $con->prepare("
+            SELECT COALESCE(SUM(pontos_cp), 0) AS total_pontos
+            FROM a_curso_pontuacao
+            WHERE idusuario_cp = :idusuario
+              AND idcurso_cp   = :idcurso
+              AND idturma_cp   = :idturma
+        ");
+        $stmtPontuacao->bindValue(':idusuario', $userCod, PDO::PARAM_INT);
+        $stmtPontuacao->bindValue(':idcurso', $idCurso, PDO::PARAM_INT);
+        $stmtPontuacao->bindValue(':idturma', $idTurma, PDO::PARAM_STR);
+        $stmtPontuacao->execute();
+
+        $totalPontuacaoUsuario = (int)($stmtPontuacao->fetch(PDO::FETCH_ASSOC)['total_pontos'] ?? 0);
+    }
+} catch (Throwable $e) {
+    $totalPontuacaoUsuario = 0;
+}
 // --- Lógica Dinâmica ---
 $activeModulo = $_SESSION['dadosmodulo'] ?? 0;
 $activeModulo = (int)encrypt_secure($activeModulo, 'd');
@@ -196,7 +222,7 @@ try {
                     <a href="index.php" class="text-decoration-none text-muted hover-primary">Meus Cursos</a>
                     <i class="bi bi-chevron-right mx-2" style="font-size: 0.75rem;"></i>
                     <span class="text-muted" title="<?= htmlspecialchars($nomeCurso) ?>">
-                        <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span> 
+                        <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span>
                 </div>
                 <h3 class="fw-bold mb-1 text-body-emphasis"><?= $nomeTurma ?> </h3>
                 <!-- <div><?php echo encrypt_secure($_COOKIE['registraacesso'], 'd');  ?></div> -->
@@ -467,6 +493,82 @@ try {
                 sunIcon.classList.remove('d-none');
                 moonIcon.classList.add('d-none');
             }
+        });
+    </script>
+
+    <a href="perfil_ranking.php" id="box-pontuacao-fixa" class="text-decoration-none" title="Ver ranking de pontuação">
+        <div class="icone-trofeu">
+            <i class="bi bi-trophy-fill"></i>
+        </div>
+        <div class="texto-pontos">
+            <span class="label">Pontuação</span>
+            <span class="valor"><?= number_format($totalPontuacaoUsuario, 0, ',', '.') ?></span>
+        </div>
+    </a>
+
+    <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2000;">
+        <div id="toastPontuacao" class="toast align-items-center border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastPontuacaoBody" class="toast-body fw-semibold d-flex align-items-center gap-2">
+                    <i class="bi bi-trophy-fill text-warning fs-5"></i>
+                    <span>Você ganhou pontos!</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function exibirToastPontuacao(mensagem, pontosGanhos = 0) {
+            const toastEl = document.getElementById('toastPontuacao');
+            const toastBody = document.getElementById('toastPontuacaoBody');
+
+            if (!toastEl || !toastBody) return;
+
+            toastBody.innerHTML = `
+            <i class="bi bi-trophy-fill text-warning fs-5"></i>
+            <span>${mensagem}</span>
+        `;
+
+            if (pontosGanhos > 0) {
+                const boxPontuacao = document.querySelector('#box-pontuacao-fixa .valor');
+                if (boxPontuacao) {
+                    const atual = parseInt((boxPontuacao.textContent || '0').replace(/\./g, ''), 10) || 0;
+                    const novoValor = atual + pontosGanhos;
+                    boxPontuacao.textContent = novoValor.toLocaleString('pt-BR');
+                }
+            }
+
+            const toast = new bootstrap.Toast(toastEl, {
+                delay: 3500
+            });
+
+            toast.show();
+        }
+
+        async function registrarPontuacaoModulo() {
+            try {
+                const response = await fetch('componentes/v1/ajax_registraPontuacaoModulo.php', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.inserted) {
+                    exibirToastPontuacao(data.message || 'Pontuação adquirida com sucesso!', Number(data.pontos || 0));
+                }
+            } catch (error) {
+                console.error('Erro ao registrar pontuação:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            registrarPontuacaoModulo();
         });
     </script>
 </body>

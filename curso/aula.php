@@ -379,6 +379,27 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
         [data-bs-theme="dark"] #modalMeuCaderno .note-editor.note-frame {
             border-color: #374151;
         }
+
+        #toastPontuacaoAula,
+        #toastPontuacaoVideo {
+            min-width: 320px;
+            background: #ffffff;
+            color: #212529;
+            border-left: 6px solid #ffc107;
+        }
+
+        [data-bs-theme="dark"] #toastPontuacaoAula,
+        [data-bs-theme="dark"] #toastPontuacaoVideo {
+            background: #1f2328;
+            color: #ffffff;
+            border-left: 6px solid #ffc107;
+        }
+
+        #toastPontuacaoAulaBody,
+        #toastPontuacaoVideoBody {
+            font-size: 1rem;
+            padding: 16px 18px;
+        }
     </style>
 
     <?php
@@ -1537,12 +1558,25 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
         });
     </script>
 
+
     <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2000;">
         <div id="toastPontuacaoAula" class="toast align-items-center border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div id="toastPontuacaoAulaBody" class="toast-body fw-semibold d-flex align-items-center gap-2">
                     <i class="bi bi-trophy-fill text-warning fs-5"></i>
                     <span>Você ganhou pontos nesta aula!</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2001;">
+        <div id="toastPontuacaoVideo" class="toast align-items-center border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastPontuacaoVideoBody" class="toast-body fw-semibold d-flex align-items-center gap-2">
+                    <i class="bi bi-trophy-fill text-warning fs-5"></i>
+                    <span>Você ganhou 500 pontos!</span>
                 </div>
                 <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
             </div>
@@ -1560,6 +1594,12 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
     </a>
 
     <script>
+        let pontuacaoVideoJaEnviada = false;
+        let tempoAssistidoSegundos = 0;
+        let intervaloContadorVideo = null;
+        let ytPlayer = null;
+        let ytMonitorInterval = null;
+
         function atualizarBoxPontuacao(pontosGanhos) {
             const valorPontuacao = document.querySelector('#box-pontuacao-fixa .valor');
 
@@ -1572,19 +1612,19 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
             valorPontuacao.textContent = novoValor.toLocaleString('pt-BR');
         }
 
-        function exibirToastPontuacaoAula(mensagem) {
-            const toastEl = document.getElementById('toastPontuacaoAula');
-            const toastBody = document.getElementById('toastPontuacaoAulaBody');
+        function exibirToastPontuacao(toastId, bodyId, mensagem, delay = 3500) {
+            const toastEl = document.getElementById(toastId);
+            const toastBody = document.getElementById(bodyId);
 
             if (!toastEl || !toastBody) return;
 
             toastBody.innerHTML = `
-            <i class="bi bi-trophy-fill text-warning fs-5"></i>
-            <span>${mensagem}</span>
-        `;
+                <i class="bi bi-trophy-fill text-warning fs-5"></i>
+                <span>${mensagem}</span>
+            `;
 
             const toast = new bootstrap.Toast(toastEl, {
-                delay: 3500
+                delay: delay
             });
 
             toast.show();
@@ -1603,66 +1643,17 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                 const data = await response.json();
 
                 if (data.success && data.inserted) {
-                    exibirToastPontuacaoAula(data.message || 'Você ganhou 50 pontos nesta aula!');
+                    exibirToastPontuacao(
+                        'toastPontuacaoAula',
+                        'toastPontuacaoAulaBody',
+                        data.message || 'Você ganhou 50 pontos nesta aula!',
+                        3500
+                    );
                     atualizarBoxPontuacao(data.pontos || 0);
                 }
             } catch (error) {
                 console.error('Erro ao registrar pontuação da aula:', error);
             }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            registrarPontuacaoAula();
-        });
-    </script>
-
-    <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2000;">
-        <div id="toastPontuacaoVideo" class="toast align-items-center border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div id="toastPontuacaoVideoBody" class="toast-body fw-semibold d-flex align-items-center gap-2">
-                    <i class="bi bi-trophy-fill text-warning fs-5"></i>
-                    <span>Você ganhou 500 pontos!</span>
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-        </div>
-    </div>
-
-
-    <script>
-        let pontuacaoVideoJaEnviada = false;
-        let tempoAssistidoSegundos = 0;
-        let intervaloContadorVideo = null;
-        let ytPlayer = null;
-        let ytMonitorInterval = null;
-
-        function atualizarBoxPontuacao(pontosGanhos) {
-            const valorPontuacao = document.querySelector('#box-pontuacao-fixa .valor');
-            if (!valorPontuacao) return;
-
-            const textoAtual = (valorPontuacao.textContent || '0').trim();
-            const valorAtual = parseInt(textoAtual.replace(/\./g, ''), 10) || 0;
-            const novoValor = valorAtual + (parseInt(pontosGanhos, 10) || 0);
-
-            valorPontuacao.textContent = novoValor.toLocaleString('pt-BR');
-        }
-
-        function exibirToastPontuacaoVideo(mensagem) {
-            const toastEl = document.getElementById('toastPontuacaoVideo');
-            const toastBody = document.getElementById('toastPontuacaoVideoBody');
-
-            if (!toastEl || !toastBody) return;
-
-            toastBody.innerHTML = `
-            <i class="bi bi-trophy-fill text-warning fs-5"></i>
-            <span>${mensagem}</span>
-        `;
-
-            const toast = new bootstrap.Toast(toastEl, {
-                delay: 4000
-            });
-
-            toast.show();
         }
 
         async function registrarPontuacaoVideo4Min() {
@@ -1682,7 +1673,12 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                 const data = await response.json();
 
                 if (data.success && data.inserted) {
-                    exibirToastPontuacaoVideo(data.message || 'Parabéns! Você ganhou 500 pontos.');
+                    exibirToastPontuacao(
+                        'toastPontuacaoVideo',
+                        'toastPontuacaoVideoBody',
+                        data.message || 'Parabéns! Você ganhou 500 pontos por assistir 4 minutos da aula.',
+                        4000
+                    );
                     atualizarBoxPontuacao(data.pontos || 0);
                     return;
                 }
@@ -1718,43 +1714,12 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
             }
         }
 
-        function configurarVideoMP4() {
-            const video = document.querySelector('video');
-
-            if (!video) return;
-
-            video.addEventListener('play', () => {
-                iniciarContadorTempoReal();
-            });
-
-            video.addEventListener('pause', () => {
-                pararContadorTempoReal();
-            });
-
-            video.addEventListener('ended', () => {
-                pararContadorTempoReal();
-            });
-
-            video.addEventListener('waiting', () => {
-                pararContadorTempoReal();
-            });
-
-            video.addEventListener('seeking', () => {
-                pararContadorTempoReal();
-            });
-
-            video.addEventListener('seeked', () => {
-                if (!video.paused && !video.ended) {
-                    iniciarContadorTempoReal();
-                }
-            });
-        }
-
         function iniciarMonitorYoutube(player) {
             if (ytMonitorInterval || pontuacaoVideoJaEnviada) return;
 
             ytMonitorInterval = setInterval(() => {
                 if (document.visibilityState !== 'visible') return;
+                if (!player || typeof player.getPlayerState !== 'function' || typeof YT === 'undefined' || !YT.PlayerState) return;
 
                 const state = player.getPlayerState();
 
@@ -1776,57 +1741,92 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
             }
         }
 
+        function configurarVideoMP4() {
+            const video = document.getElementById('player-video-aula');
+
+            if (!video) return;
+
+            video.addEventListener('play', iniciarContadorTempoReal);
+            video.addEventListener('pause', pararContadorTempoReal);
+            video.addEventListener('ended', pararContadorTempoReal);
+            video.addEventListener('waiting', pararContadorTempoReal);
+            video.addEventListener('seeking', pararContadorTempoReal);
+
+            video.addEventListener('seeked', () => {
+                if (!video.paused && !video.ended) {
+                    iniciarContadorTempoReal();
+                }
+            });
+        }
+
+        function criarPlayerYoutube() {
+            const iframeYoutube = document.getElementById('youtube-player-aula');
+
+            if (!iframeYoutube || typeof YT === 'undefined' || typeof YT.Player === 'undefined') return;
+
+            ytPlayer = new YT.Player('youtube-player-aula', {
+                events: {
+                    onStateChange: function(event) {
+                        if (typeof YT === 'undefined' || !YT.PlayerState) return;
+
+                        if (event.data === YT.PlayerState.PLAYING) {
+                            iniciarMonitorYoutube(ytPlayer);
+                        } else {
+                            pararMonitorYoutube();
+                        }
+                    }
+                }
+            });
+        }
+
         function configurarYoutube() {
-            const iframeYoutube = document.querySelector('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
+            const iframeYoutube = document.getElementById('youtube-player-aula');
 
             if (!iframeYoutube) return;
 
-            if (!iframeYoutube.id) {
-                iframeYoutube.id = 'youtube-player-aula';
+            if (window.YT && typeof window.YT.Player === 'function') {
+                criarPlayerYoutube();
+                return;
             }
 
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(tag);
-
             window.onYouTubeIframeAPIReady = function() {
-                ytPlayer = new YT.Player(iframeYoutube.id, {
-                    events: {
-                        'onStateChange': function(event) {
-                            if (event.data === YT.PlayerState.PLAYING) {
-                                iniciarMonitorYoutube(ytPlayer);
-                            } else {
-                                pararMonitorYoutube();
-                            }
-                        }
-                    }
-                });
+                criarPlayerYoutube();
             };
+
+            if (!document.getElementById('youtube-iframe-api-script')) {
+                const tag = document.createElement('script');
+                tag.id = 'youtube-iframe-api-script';
+                tag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(tag);
+            }
         }
 
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState !== 'visible') {
                 pararContadorTempoReal();
                 pararMonitorYoutube();
-            } else {
-                const video = document.querySelector('video');
-                if (video && !video.paused && !video.ended) {
-                    iniciarContadorTempoReal();
-                }
+                return;
+            }
 
-                if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
-                    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
-                        iniciarMonitorYoutube(ytPlayer);
-                    }
+            const video = document.getElementById('player-video-aula');
+            if (video && !video.paused && !video.ended) {
+                iniciarContadorTempoReal();
+            }
+
+            if (ytPlayer && typeof ytPlayer.getPlayerState === 'function' && typeof YT !== 'undefined' && YT.PlayerState) {
+                if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                    iniciarMonitorYoutube(ytPlayer);
                 }
             }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            registrarPontuacaoAula();
             configurarVideoMP4();
             configurarYoutube();
         });
     </script>
+
 </body>
 
 </html>

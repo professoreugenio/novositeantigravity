@@ -3,6 +3,7 @@
   --primary: #0284C7;
   --secondary: #10B981;
   --gradient-main: linear-gradient(135deg, #0284C7 0%, #10B981 100%);
+  --gradient-yellow: linear-gradient(135deg, #c73002 0%, #eecd15 100%);
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -12,6 +13,7 @@
   --primary: #38BDF8;
   --secondary: #34D399;
   --gradient-main: linear-gradient(135deg, #38BDF8 0%, #34D399 100%);
+  --gradient-yellow: linear-gradient(135deg, #c73002 0%, #eecd15 100%);
   --bs-primary: #38BDF8;
   --bs-primary-rgb: 56, 189, 248;
 }
@@ -43,6 +45,14 @@ h6,
   background-clip: text;
   color: transparent;
   display: inline-block;
+}
+
+.gradient-text-yellow {
+  background: var(--gradient-yellow);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* display: inline-block; */
 }
 
 /* Buttons */
@@ -2308,4 +2318,151 @@ DARK MODE - CARD AÇÕES DA AULA
 #toastPontuacaoVideoBody {
   font-size: 1rem;
   padding: 16px 18px;
+}
+
+/* ÁREA DO ESTUDANTE */
+.student-area-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(10, 18, 37, 0.92), rgba(17, 34, 64, 0.86));
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.28);
+  padding: 2rem;
+  color: #ffffff;
+  backdrop-filter: blur(12px);
+}
+
+.student-area-card::before,
+.student-area-card::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.18;
+}
+
+.student-area-card::before {
+  width: 180px;
+  height: 180px;
+  top: -60px;
+  right: -50px;
+  background: #00BB9C;
+}
+
+.student-area-card::after {
+  width: 140px;
+  height: 140px;
+  bottom: -55px;
+  left: -35px;
+  background: #FF9C00;
+}
+
+.student-area-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem .95rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.student-area-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: .85rem;
+
+}
+
+.student-area-desc {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  max-width: 580px;
+}
+
+.student-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.student-stat-box {
+  position: relative;
+  z-index: 1;
+  padding: 1.15rem 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 116px;
+}
+
+.student-stat-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: .9rem;
+  margin-bottom: .45rem;
+}
+
+.student-stat-value {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+
+.student-stat-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 1.1rem;
+}
+
+.student-area-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .9rem;
+}
+
+.btn-student-main {
+  background: linear-gradient(135deg, #00BB9C, #0ed7b2);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding: .95rem 1.4rem;
+  border-radius: 999px;
+  box-shadow: 0 15px 30px rgba(0, 187, 156, 0.25);
+}
+
+.btn-student-main:hover {
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.student-mini-note {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: .95rem;
+}
+
+@media (max-width: 991.98px) {
+  .student-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

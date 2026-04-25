@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
@@ -51,6 +52,10 @@ $v = fn($k) => htmlspecialchars((string) ($dadosUser[$k] ?? ''), ENT_QUOTES, 'UT
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações do Perfil | Professor Eugênio</title>
+    <meta name="theme-color" content="#1d468b">
+    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="../assets/img/favicon.ico">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,54 +96,54 @@ $v = fn($k) => htmlspecialchars((string) ($dadosUser[$k] ?? ''), ENT_QUOTES, 'UT
                         class="bi bi-arrow-left me-2"></i> Voltar</a>
             </div>
         </div>
-<?php $paginaAtual = basename($_SERVER['PHP_SELF']); ?>
+        <?php $paginaAtual = basename($_SERVER['PHP_SELF']); ?>
         <div class="row g-4" id="configuracoes">
-    
-    <div class="col-lg-2">
-    <div class="perfil-menu-lateral">
-        <div class="perfil-menu-titulo">Meu Perfil</div>
 
-        <div class="d-grid gap-2">
-            <a href="perfil_Configuracoes.php"
-               class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_Configuracoes.php' ? 'active' : '' ?>">
-                <span class="perfil-menu-icone"><i class="bi bi-person-gear"></i></span>
-                <span>Editar Perfil</span>
-            </a>
+            <div class="col-lg-2">
+                <div class="perfil-menu-lateral">
+                    <div class="perfil-menu-titulo">Meu Perfil</div>
 
-            <a href="perfil_fotos.php"
-               class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_fotos.php' ? 'active' : '' ?>">
-                <span class="perfil-menu-icone"><i class="bi bi-image"></i></span>
-                <span>Atualizar foto</span>
-            </a>
+                    <div class="d-grid gap-2">
+                        <a href="perfil_Configuracoes.php"
+                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_Configuracoes.php' ? 'active' : '' ?>">
+                            <span class="perfil-menu-icone"><i class="bi bi-person-gear"></i></span>
+                            <span>Editar Perfil</span>
+                        </a>
 
-            <a href="perfil_redessociais.php"
-               class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_redessociais.php' ? 'active' : '' ?>">
-                <span class="perfil-menu-icone"><i class="bi bi-share"></i></span>
-                <span>Redes sociais</span>
-            </a>
+                        <a href="perfil_fotos.php"
+                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_fotos.php' ? 'active' : '' ?>">
+                            <span class="perfil-menu-icone"><i class="bi bi-image"></i></span>
+                            <span>Atualizar foto</span>
+                        </a>
 
-            <a href="perfil_ranking.php"
-               class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_ranking.php' ? 'active' : '' ?>">
-                <span class="perfil-menu-icone"><i class="bi bi-trophy"></i></span>
-                <span>Meu Ranking</span>
-            </a>
+                        <a href="perfil_redessociais.php"
+                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_redessociais.php' ? 'active' : '' ?>">
+                            <span class="perfil-menu-icone"><i class="bi bi-share"></i></span>
+                            <span>Redes sociais</span>
+                        </a>
 
-            <a href="perfil_mascote.php"
-               class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_mascote.php' ? 'active' : '' ?>">
-                <span class="perfil-menu-icone"><i class="bi bi-emoji-smile"></i></span>
-                <span>Mascote</span>
-            </a>
+                        <a href="perfil_ranking.php"
+                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_ranking.php' ? 'active' : '' ?>">
+                            <span class="perfil-menu-icone"><i class="bi bi-trophy"></i></span>
+                            <span>Meu Ranking</span>
+                        </a>
 
-            <a href="perfil_termos.php"
-               class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_termos.php' ? 'active' : '' ?>">
-                <span class="perfil-menu-icone"><i class="bi bi-file-text"></i></span>
-                <span>Termos do site</span>
-            </a>
-        </div>
-    </div>
-</div>
+                        <a href="perfil_mascote.php"
+                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_mascote.php' ? 'active' : '' ?>">
+                            <span class="perfil-menu-icone"><i class="bi bi-emoji-smile"></i></span>
+                            <span>Mascote</span>
+                        </a>
 
-    <div class="col-lg-10">
+                        <a href="perfil_termos.php"
+                            class="btn perfil-menu-btn <?= $paginaAtual === 'perfil_termos.php' ? 'active' : '' ?>">
+                            <span class="perfil-menu-icone"><i class="bi bi-file-text"></i></span>
+                            <span>Termos do site</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-10">
                 <div class="card border-0 shadow-sm rounded-4 custom-card p-4 p-md-5 bg-body mb-4">
                     <form id="formConfiguracoes" method="POST" action="#">
 

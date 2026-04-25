@@ -1,6 +1,8 @@
 <?php
 
+
 declare(strict_types=1);
+
 define('BASEPATH', true);
 define('APP_ROOT', dirname(__DIR__, 4));
 define('APP_ROOT_LOCAL', dirname(__DIR__, 2));

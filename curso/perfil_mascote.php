@@ -136,7 +136,7 @@ if ($pastasc !== '' && $imagem50 !== '') {
                 <div class="card border-0 shadow-sm rounded-4 custom-card p-4 p-md-5 bg-body mb-4">
                     <div class="row g-4 align-items-start">
                         <div class="col-lg-12">
-                            Conteúdo mascote aqui
+                            Conteúdo aqui
                         </div>
                     </div>
                 </div>

@@ -1,28 +1,6 @@
 <?php
 
-declare(strict_types=1);
-define('BASEPATH', true);
-define('PUBLIC_ROOT', __DIR__);
-define('APP_ROOT', dirname(__DIR__, 2));
-define('RAIZ_ROOT', dirname(__DIR__, 1));
-define('COMPONENTES_ROOT', APP_ROOT . '/componentes');
-date_default_timezone_set('America/Fortaleza');
-header('Content-Type: text/html; charset=utf-8');
-
-define('SESSION_TTL', 60 * 60 * 5); // 5 horas
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_set_cookie_params([
-        'lifetime' => SESSION_TTL,
-        'path' => '/',
-        'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    session_start();
-}
-
-require_once COMPONENTES_ROOT . '/v1/class.conexao.php';
-require_once COMPONENTES_ROOT . '/v1/autenticacao.php';
+require_once 'componentes/v1/Query_head.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryCurso.php';
 require_once PUBLIC_ROOT . '/componentes/v1/QueryModulo.php';
@@ -174,6 +152,10 @@ unset($_SESSION['msg_sucesso'], $_SESSION['msg_erro']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questionário | Professor Eugênio</title>
+    <meta name="theme-color" content="#1d468b">
+    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="../assets/img/favicon.ico">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

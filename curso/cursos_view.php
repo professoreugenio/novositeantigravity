@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1)
-;
+
+declare(strict_types=1);
 define('BASEPATH', true);
 define('PUBLIC_ROOT', __DIR__);
 // ✅ pasta acima do public_html (ex.: /home/usuario)
@@ -26,29 +26,35 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Curso | Professor Eugênio</title>
+    <meta name="theme-color" content="#1d468b">
+    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="../assets/img/favicon.ico">
     <meta name="description" content="Conheça todos os detalhes do nosso curso completo e transforme sua carreira.">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
+
 <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
 
     <!-- Navbar -->
-   <?php include PUBLIC_ROOT . '/componentes/v1/nav.php'; ?>
+    <?php include PUBLIC_ROOT . '/componentes/v1/nav.php'; ?>
 
     <!-- Main Content -->
     <main style="margin-top: 65px;">
@@ -67,7 +73,7 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
                         <span class="badge bg-primary mb-3 px-3 py-2 fs-6 rounded-pill">Dados e Análise</span>
                         <h1 class="display-4 fw-bold mb-4">Formação em Power BI Avançado</h1>
                         <p class="lead opacity-75 mb-4 mb-lg-5">Domine desde a extração de dados no Power Query até modelagens complexas em DAX, e crie dashboards interativos reais requisitados pelo mercado corporativo.</p>
-                        
+
                         <div class="d-flex flex-wrap align-items-center gap-4 mb-4">
                             <div class="d-flex align-items-center text-warning gap-1">
                                 <i class="bi bi-star-fill"></i>
@@ -103,10 +109,10 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
         <section class="py-5">
             <div class="container py-4">
                 <div class="row g-5">
-                    
+
                     <!-- Coluna Esquerda: Descrição, O que vai aprender, Grade -->
                     <div class="col-lg-8">
-                        
+
                         <!-- O que você vai aprender -->
                         <div class="card bg-body custom-card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5">
                             <h3 class="fw-bold mb-4">O que você vai aprender</h3>
@@ -157,7 +163,7 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
                             </div>
 
                             <div class="accordion custom-accordion shadow-sm" id="courseAccordion">
-                                
+
                                 <!-- Módulo 1 -->
                                 <div class="accordion-item border-0 border-bottom">
                                     <h2 class="accordion-header">
@@ -225,12 +231,12 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
 
                     </div>
-                    
+
                     <!-- Coluna Direita: Box de Preço e Info Lateral -->
                     <div class="col-lg-4">
                         <div class="card shadow-lg border-0 bg-body rounded-4 position-sticky" style="top: 100px;">
@@ -243,7 +249,7 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div class="card-body p-4 p-xl-5">
                                 <div class="mb-4">
                                     <h2 class="display-5 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
@@ -267,9 +273,9 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
                                     <li><i class="bi bi-infinity me-2 text-primary"></i> Acesso total vitalício</li>
                                     <li><i class="bi bi-trophy me-2 text-primary"></i> Certificado de conclusão</li>
                                 </ul>
-                                
+
                                 <hr class="my-4 opacity-10">
-                                
+
                                 <div class="text-center">
                                     <a href="#" class="text-decoration-none text-muted small fw-medium hover-primary d-inline-flex align-items-center gap-2">
                                         <i class="bi bi-share"></i> Compartilhar Curso
@@ -278,7 +284,7 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </section>
@@ -309,7 +315,7 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
 
         const savedTheme = localStorage.getItem('theme') || 'light';
         htmlElement.setAttribute('data-bs-theme', savedTheme);
-        if(savedTheme === 'dark') {
+        if (savedTheme === 'dark') {
             sunIcon.classList.add('d-none');
             moonIcon.classList.remove('d-none');
         }
@@ -317,10 +323,10 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
         toggleBtn.addEventListener('click', () => {
             const currentTheme = htmlElement.getAttribute('data-bs-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
+
             htmlElement.setAttribute('data-bs-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            
+
             if (newTheme === 'dark') {
                 sunIcon.classList.add('d-none');
                 moonIcon.classList.remove('d-none');
@@ -331,5 +337,5 @@ require_once PUBLIC_ROOT . '/componentes/v1/QueryUsuario.php';
         });
     </script>
 </body>
-</html>
 
+</html>

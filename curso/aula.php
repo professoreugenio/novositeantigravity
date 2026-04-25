@@ -1827,6 +1827,88 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
         });
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const areaTextoAula = document.getElementById('textoAula');
+
+            if (!areaTextoAula) {
+                return;
+            }
+
+            const blocosPre = areaTextoAula.querySelectorAll('pre');
+
+            blocosPre.forEach(function(pre) {
+                // Evita criar botão duplicado caso algum script recarregue o conteúdo
+                if (pre.closest('.pre-copy-wrapper')) {
+                    return;
+                }
+
+                // Cria o wrapper para posicionar o botão sobre o bloco <pre>
+                const wrapper = document.createElement('div');
+                wrapper.className = 'pre-copy-wrapper';
+
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(pre);
+
+                // Cria o botão copiar
+                const botao = document.createElement('button');
+                botao.type = 'button';
+                botao.className = 'btn-copy-pre';
+                botao.setAttribute('aria-label', 'Copiar conteúdo do bloco');
+
+                botao.innerHTML = `
+            <i class="bi bi-clipboard me-1"></i>
+            <span>copiar</span>
+        `;
+
+                wrapper.appendChild(botao);
+
+                botao.addEventListener('click', async function() {
+                    const textoParaCopiar = pre.innerText || pre.textContent || '';
+                    const spanTexto = botao.querySelector('span');
+                    const icone = botao.querySelector('i');
+
+                    try {
+                        if (navigator.clipboard && window.isSecureContext) {
+                            await navigator.clipboard.writeText(textoParaCopiar);
+                        } else {
+                            // Fallback para navegadores mais antigos
+                            const textarea = document.createElement('textarea');
+                            textarea.value = textoParaCopiar;
+                            textarea.setAttribute('readonly', '');
+                            textarea.style.position = 'fixed';
+                            textarea.style.top = '-9999px';
+
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            document.execCommand('copy');
+                            textarea.remove();
+                        }
+
+                        spanTexto.textContent = 'copiado';
+                        icone.className = 'bi bi-check2-circle me-1';
+                        botao.classList.add('copiado');
+
+                        setTimeout(function() {
+                            spanTexto.textContent = 'copiar';
+                            icone.className = 'bi bi-clipboard me-1';
+                            botao.classList.remove('copiado');
+                        }, 1800);
+
+                    } catch (error) {
+                        spanTexto.textContent = 'erro';
+                        icone.className = 'bi bi-exclamation-triangle me-1';
+
+                        setTimeout(function() {
+                            spanTexto.textContent = 'copiar';
+                            icone.className = 'bi bi-clipboard me-1';
+                        }, 1800);
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>

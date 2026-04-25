@@ -1117,6 +1117,69 @@ h6,
   border-left-color: #38BDF8;
 }
 
+
+/* =========================================================
+BOTÃO COPIAR DENTRO DOS BLOCOS <pre>
+========================================================= */
+
+#textoAula .pre-copy-wrapper {
+  position: relative;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#textoAula .pre-copy-wrapper pre {
+  margin: 0 !important;
+  padding-top: 3.2rem !important;
+  position: relative;
+}
+
+#textoAula .btn-copy-pre {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 5;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  background: rgba(13, 110, 253, 0.92);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+
+#textoAula .btn-copy-pre:hover {
+  background: #0d6efd;
+  transform: translateY(-1px);
+}
+
+#textoAula .btn-copy-pre.copiado {
+  background: #198754;
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] #textoAula .btn-copy-pre {
+  background: rgba(56, 189, 248, 0.95);
+  color: #020617;
+}
+
+[data-bs-theme="dark"] #textoAula .btn-copy-pre:hover {
+  background: #7dd3fc;
+}
+
+[data-bs-theme="dark"] #textoAula .btn-copy-pre.copiado {
+  background: #22c55e;
+  color: #ffffff;
+}
+
 #textoAula {
   font-size: 1.1rem;
 }
@@ -2159,8 +2222,8 @@ DARK MODE - CARD AÇÕES DA AULA
 
 #box-pontuacao-fixa {
   position: fixed;
-  right: 100px;
-  bottom: 20px;
+  right: -120px;
+  bottom: 40px;
   z-index: 1050;
   display: flex;
   align-items: center;
@@ -2179,10 +2242,16 @@ DARK MODE - CARD AÇÕES DA AULA
 }
 
 #box-pontuacao-fixa:hover {
-  transform: translateY(-8px);
+  transition: all 0.5s ease;
+  right: 0px;
+  transform: translateX(-3px);
+  transform: translateY(-3px);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
   text-decoration: none;
+
 }
+
+
 
 #box-pontuacao-fixa:focus,
 #box-pontuacao-fixa:active {

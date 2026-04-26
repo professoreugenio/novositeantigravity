@@ -565,9 +565,11 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                                 <span class="social-text"><?= $qtdComentariosStr ?></span>
                             </a>
                         </div>
-                        <div class="social-view">
-                            <i class="bi bi-chat-dots-fill"></i> 12 - Ver
-                        </div>
+                        <button id="btn-maisLicoes" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLicoes"
+                            class="btn btn-primary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2 text-nowrap"
+                            style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none;">
+                            <i class="bi bi-list-ul"></i> Mais Lições
+                        </button>
                     </div>
                 </div>
                 <?php
@@ -630,7 +632,7 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
 
                             </div>
                             <div class="col-6">
-                                
+
 
                                 <a href="Depoimentos.php"
                                     class="btn btn-action-custom btn-action-pink w-100 d-flex justify-content-between align-items-center"
@@ -669,11 +671,7 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                                     <?= htmlspecialchars((string) $nomeCurso) ?> <?= $idPublicacaoAtiva; ?>
                                 </div>
                             </div>
-                            <button id="btn-maisLicoes" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLicoes"
-                                class="btn btn-primary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2 text-nowrap"
-                                style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none;">
-                                <i class="bi bi-list-ul"></i> Mais Lições
-                            </button>
+
                         </div>
                     </div>
                     <!-- Text Content Card -->
@@ -1912,6 +1910,122 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
         });
     </script>
 
+    <!-- Botão fixo de tópicos da aula -->
+    <div id="topicosAulaBox" class="topicos-aula-box d-none">
+        <div id="topicosAulaDropdown" class="topicos-aula-dropdown">
+            <div class="topicos-aula-header">
+                <i class="bi bi-list-check"></i>
+                <span>Tópicos da aula</span>
+            </div>
+
+            <div id="topicosAulaLista" class="topicos-aula-lista"></div>
+        </div>
+
+        <button type="button" id="btnTopicosAula" class="btn-topicos-aula">
+            <i class="bi bi-list-ul"></i>
+            <span>Tópicos</span>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textoAula = document.getElementById('textoAula');
+            const boxTopicos = document.getElementById('topicosAulaBox');
+            const btnTopicos = document.getElementById('btnTopicosAula');
+            const listaTopicos = document.getElementById('topicosAulaLista');
+
+            if (!textoAula || !boxTopicos || !btnTopicos || !listaTopicos) {
+                return;
+            }
+
+            const titulosH2 = textoAula.querySelectorAll('h2');
+
+            if (titulosH2.length === 0) {
+                boxTopicos.classList.add('d-none');
+                return;
+            }
+
+            boxTopicos.classList.remove('d-none');
+
+            function criarIdSeguro(texto, indice) {
+                let base = texto
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '');
+
+                if (base === '') {
+                    base = 'topico';
+                }
+
+                let idFinal = base;
+                let contador = 1;
+
+                while (document.getElementById(idFinal)) {
+                    idFinal = base + '-' + contador;
+                    contador++;
+                }
+
+                return 'topico-aula-' + (indice + 1) + '-' + base;
+            }
+
+            titulosH2.forEach(function(titulo, index) {
+                const textoTitulo = (titulo.textContent || '').trim();
+
+                if (textoTitulo === '') {
+                    return;
+                }
+
+                if (!titulo.id) {
+                    titulo.id = criarIdSeguro(textoTitulo, index);
+                }
+
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'topicos-aula-item';
+
+                item.innerHTML = `
+            <span class="numero-topico">${index + 1}</span>
+            <span>${textoTitulo}</span>
+        `;
+
+                item.addEventListener('click', function() {
+                    const destino = document.getElementById(titulo.id);
+
+                    if (!destino) {
+                        return;
+                    }
+
+                    boxTopicos.classList.remove('is-open');
+
+                    destino.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+
+                listaTopicos.appendChild(item);
+            });
+
+            btnTopicos.addEventListener('click', function(event) {
+                event.stopPropagation();
+                boxTopicos.classList.toggle('is-open');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!boxTopicos.contains(event.target)) {
+                    boxTopicos.classList.remove('is-open');
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    boxTopicos.classList.remove('is-open');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

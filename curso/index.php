@@ -60,21 +60,32 @@ if (isset($_SESSION['dadosdia'])) {
                 }
 
                 $stmtInscricoes = $con->prepare("
-                    SELECT 
-                        i.codigoinscricao, 
-                        i.chaveturma, 
-                        c.codigocursos, 
-                        c.pasta, 
-                        c.nomecurso, 
-                        c.bgcolor,
-                        t.nometurma,
-                        t.codigoturma,
-                        (SELECT mfp.foto FROM new_sistema_midias_fotos_PJA mfp WHERE mfp.pasta = c.pasta AND mfp.tipo = '3' LIMIT 1) as foto
-                    FROM new_sistema_inscricao_PJA i
-                    INNER JOIN new_sistema_cursos_turmas t ON i.chaveturma = t.chave
-                    INNER JOIN new_sistema_cursos c ON t.codcursost = c.codigocursos
-                    WHERE i.codigousuario = :codUser
-                ");
+    SELECT 
+        i.codigoinscricao, 
+        i.chaveturma, 
+        c.codigocursos, 
+        c.pasta, 
+        c.nomecurso, 
+        c.bgcolor,
+        c.visivelsc,
+        t.nometurma,
+        t.codigoturma,
+        (
+            SELECT mfp.foto 
+            FROM new_sistema_midias_fotos_PJA mfp 
+            WHERE mfp.pasta = c.pasta 
+              AND mfp.tipo = '3' 
+            LIMIT 1
+        ) AS foto
+    FROM new_sistema_inscricao_PJA i
+    INNER JOIN new_sistema_cursos_turmas t 
+        ON i.chaveturma = t.chave
+    INNER JOIN new_sistema_cursos c 
+        ON t.codcursost = c.codigocursos
+    WHERE i.codigousuario = :codUser
+      AND c.visivelsc = 1
+    ORDER BY c.nomecurso ASC
+");
                 $stmtInscricoes->bindValue(':codUser', $codigoUser, PDO::PARAM_INT);
                 $stmtInscricoes->execute();
                 $inscricoes = $stmtInscricoes->fetchAll(PDO::FETCH_ASSOC);
@@ -94,10 +105,11 @@ if (isset($_SESSION['dadosdia'])) {
 
                         // Total aulas do curso
                         $stmtTotal = $con->prepare("
-                            SELECT COUNT(*) as total 
-                            FROM a_aluno_publicacoes_cursos 
-                            WHERE idcursopc = :idCurso
-                        ");
+    SELECT COUNT(*) as total 
+    FROM a_aluno_publicacoes_cursos 
+    WHERE idcursopc = :idCurso
+      AND visivelpc = 1
+");
                         $stmtTotal->bindValue(':idCurso', $idCurso, PDO::PARAM_INT);
                         $stmtTotal->execute();
                         $totalRow = $stmtTotal->fetch(PDO::FETCH_ASSOC);
@@ -117,7 +129,7 @@ if (isset($_SESSION['dadosdia'])) {
 
                         $percentualCurso = $totalAulas > 0 ? round(($assistidas / $totalAulas) * 100) : 0;
             ?>
-                        <div class="col-md-6 col-lg-3" id="cursos">
+                        <div class="col-md-6 col-lg-3" id="cursos" title="<?= $nomeCurso?>">
                             <!-- Alterado a url para action.php com id do curso encriptado -->
                             <a href="action.php?tokemCurso=<?= time(); ?>&cur=<?= urlencode(encrypt_secure((string) $idCurso . "&" . (string) $idTurma, 'e')) ?>"
                                 class="text-decoration-none text-reset d-block pb-3">
@@ -129,7 +141,7 @@ if (isset($_SESSION['dadosdia'])) {
                                     </div>
                                     <div class="card-body d-flex flex-column p-2 flex-grow-1">
                                         <h6 class="card-title fw-bold mb-4 hover-primary">
-                                            <?= htmlspecialchars(mb_strimwidth((string) $nomeCurso, 0, 20, '...')) ?></h6>
+                                            <?= htmlspecialchars(mb_strimwidth((string) $nomeCurso, 0, 30, '...')) ?></h6>
                                         <!-- Progress Section -->
                                         <div class="mt-auto">
                                             <div class="d-flex justify-content-between align-items-center mb-2">

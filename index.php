@@ -167,18 +167,7 @@ $totalAcessos = fetchTotal($con, ['a_site_registraacessosurl', 'a_site_registraa
     <!-- Footer -->
     <?php require_once PUBLIC_ROOT . '/componentes/v1/footer.php'; ?>
     <!-- Welcome Modal (Bootstrap Native) -->
-    <?php
-    if (!isset($_GET['st']) || empty(trim($_GET['st']))) {
-        $st = $_GET['st'] ?? '';
-        $st = trim((string)$st);
-        // Corrige o problema do + que virou espaço na URL
-        $st = str_replace(' ', '+', $st);
-        $dadosDecrypt = encrypt_secure($st, 'd');
-        $key = encrypt_secure($dadosDecrypt, 'e');
-        $_SESSION['startusuario'] = $key;
-        $_SESSION['usuario_logado'] = true;
-    }
-    ?>
+    
     <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg p-3">

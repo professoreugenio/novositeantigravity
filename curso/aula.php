@@ -630,12 +630,15 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
 
                             </div>
                             <div class="col-6">
-                                <button
-                                    class="btn btn-action-custom border-1 btn-action-pink w-100 d-flex justify-content-between align-items-center"
-                                    style="font-size: 0.85rem;">
+                                
+
+                                <a href="Depoimentos.php"
+                                    class="btn btn-action-custom btn-action-pink w-100 d-flex justify-content-between align-items-center"
+                                    style="font-size: 0.85rem; text-decoration: none;">
                                     <span><i class="bi bi-star-fill me-1"></i> Depoimento</span>
-                                    <i class="bi bi-chevron-right opacity-75"></i>
-                                </button>
+                                    <span class="action-badge badge-yellow"><i class="bi bi-clock-fill"
+                                            style="transform: scale(0.8)"></i></span>
+                                </a>
                             </div>
                             <div class="col-6">
                                 <button

@@ -2682,3 +2682,86 @@ BOTÃO FIXO DE TÓPICOS DA AULA
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   color: #ffffff;
 }
+
+
+/* =========================================================
+LAYOUT DESKTOP - VÍDEO FIXO E CONTEÚDO ROLÁVEL
+========================================================= */
+
+@media (min-width: 992px) {
+
+  /* Área principal da aula */
+  #publicacao {
+    height: calc(100vh - 110px);
+    overflow: hidden;
+    align-items: flex-start;
+  }
+
+  /* Coluna esquerda fixa visualmente */
+  #video-acoesdaAula {
+    height: calc(100vh - 110px);
+    position: sticky;
+    top: 85px;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+  }
+
+  /* Coluna direita rolável */
+  #conteudo {
+    height: calc(100vh - 110px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.75rem;
+    scroll-behavior: smooth;
+  }
+
+  /* Scrollbar mais discreta no conteúdo */
+  #conteudo::-webkit-scrollbar,
+  #video-acoesdaAula::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  #conteudo::-webkit-scrollbar-track,
+  #video-acoesdaAula::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #conteudo::-webkit-scrollbar-thumb,
+  #video-acoesdaAula::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.35);
+    border-radius: 999px;
+  }
+
+  #conteudo::-webkit-scrollbar-thumb:hover,
+  #video-acoesdaAula::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.55);
+  }
+
+  [data-bs-theme="dark"] #conteudo::-webkit-scrollbar-thumb,
+  [data-bs-theme="dark"] #video-acoesdaAula::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.25);
+  }
+
+  [data-bs-theme="dark"] #conteudo::-webkit-scrollbar-thumb:hover,
+  [data-bs-theme="dark"] #video-acoesdaAula::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.45);
+  }
+}
+
+/* =========================================================
+RESPONSIVO - VOLTA AO NORMAL
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+  #publicacao,
+  #video-acoesdaAula,
+  #conteudo {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+    top: auto !important;
+    padding-right: 0 !important;
+  }
+}

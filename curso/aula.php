@@ -706,10 +706,7 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                                             <span class="text-muted small">Especialista em Excel</span>
                                         </div>
                                     </div>
-                                    <a href="#"
-                                        class="btn btn-link text-decoration-none p-0 d-flex align-items-center gap-2 fw-semibold text-primary">
-                                        <i class="bi bi-envelope-fill"></i> Enviar dúvida
-                                    </a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -727,7 +724,7 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                                 style="background: #2563eb; border: none;" data-bs-toggle="modal"
                                 data-bs-target="#modalComentar"
                                 onclick="document.getElementById('id_parent_input').value='0'; document.getElementById('tituloModalComentar').innerText='Novo Comentário';">
-                                <i class="bi bi-plus-lg"></i> Comentar
+                                <i class="bi bi-plus-lg"></i> Comentar <i class="bi bi-envelope-fill"></i>
                             </button>
                         </div>
                         <div class="card-body p-4">

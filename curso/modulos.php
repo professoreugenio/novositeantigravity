@@ -265,11 +265,11 @@ try {
 
         <div id="row-Modulos" class="row g-4 align-items-start mt-2">
             <!-- Sidebar: Modules -->
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-3">
                 <div class="card bg-body border-0 shadow-sm rounded-4">
                     <div id="head-modulos-do-curso" class="card-header bg-transparent border-bottom-0 pt-4 pb-2 px-4">
                         <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-                            <i class="bi bi-layers text-primary"></i> Módulos do Curso <?= $activeModulo; ?>
+                            <i class="bi bi-layers text-primary"></i> Módulos do Curso
                         </h5>
                     </div>
                     <div class="card-body p-0" id="list-modulos">
@@ -302,7 +302,7 @@ try {
                                 <a href="action.php?tokemModulo=<?= time(); ?>&modulo=<?= urlencode($encMdl); ?>&dia=1" class="text-decoration-none text-reset d-block <?= $borderClass ?>" style="<?= $bgColorStyle ?>">
                                     <div class="p-4 <?= !$isActive && $mod['perc'] === 0 ? 'opacity-75' : '' ?>">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <h6 class="fw-bold mb-0"><?= htmlspecialchars((string)$mod['nome']) ?> | <?= $mod['id'] ?> <?= $activeModulo; ?> </h6>
+                                            <h6 class="fw-bold mb-0"><?= $idx + 1 ?>. <?= htmlspecialchars((string)$mod['nome']) ?></h6>
                                             <span class="small fw-bold <?= $colorClass ?>"><?= $mod['perc'] ?>%</span>
                                         </div>
 
@@ -320,7 +320,7 @@ try {
             </div>
 
             <!-- Main Content: Search and Lessons -->
-            <div class="col-12 col-lg-8">
+            <div class="col-12 col-lg-9">
                 <!-- Search Box -->
 
 
@@ -329,7 +329,7 @@ try {
                     <div class="card-body p-4">
                         <h6 class="text-muted fw-bold mb-3 text-uppercase"
                             style="font-size: 0.8rem; letter-spacing: 0.5px;">Programação por Dia <i class="bi bi-calendar-event"></i>
-                            <?= $activeModulo ?>
+
 
                         </h6>
                         <div class="d-flex flex-wrap gap-2">

@@ -2765,3 +2765,21 @@ RESPONSIVO - VOLTA AO NORMAL
     padding-right: 0 !important;
   }
 }
+
+
+.bt-nav-acessos {
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin-right: 0px;
+  transition: 0.3s;
+}
+
+.bt-nav-acessos:hover {
+  background-color: antiquewhite;
+  padding: 2px 8px;
+  transition: 0.5s;
+
+
+}

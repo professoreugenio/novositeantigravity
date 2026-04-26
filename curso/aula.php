@@ -453,9 +453,9 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
         <div class="mb-4">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-2">
-                    <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none">Meus Cursos</a></li>
+                    <li class="breadcrumb-item"><a href="index.php" class="bt-nav-acessos text-decoration-none">Meus Cursos</a></li>
                     <li class="breadcrumb-item"><a href="modulos.php"
-                            class="text-decoration-none border-bottom border-primary"
+                            class="bt-nav-acessos text-decoration-none border-bottom border-primary"
                             title="<?= htmlspecialchars($nomeCurso) ?>"><?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page"><?= $ModuloNome ?></li>
@@ -706,7 +706,7 @@ if (!empty($codigoUser) && !empty($idPublicacaoAtiva)) {
                                             <span class="text-muted small">Especialista em Excel</span>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>

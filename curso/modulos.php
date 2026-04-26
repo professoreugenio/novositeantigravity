@@ -218,8 +218,9 @@ try {
 
         <div id="head-curso" class="border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <div class="d-flex align-items-center small text-muted fw-medium">
-                    <a href="index.php" class="text-decoration-none text-muted hover-primary">Meus Cursos</a>
+                
+                <div class="d-flex  align-items-center small text-muted fw-medium">
+                    <a href="index.php" class="bt-nav-acessos text-decoration-none text-muted hover-primary">Meus Cursos</a>
                     <i class="bi bi-chevron-right mx-2" style="font-size: 0.75rem;"></i>
                     <span class="text-muted" title="<?= htmlspecialchars($nomeCurso) ?>">
                         <?= mb_strlen($nomeCurso, 'UTF-8') > 20 ? htmlspecialchars(mb_substr($nomeCurso, 0, 20, 'UTF-8')) . '...' : htmlspecialchars($nomeCurso) ?></span>

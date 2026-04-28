@@ -1,0 +1,15 @@
+[27-Apr-2026 21:15:55 America/Sao_Paulo] PHP Warning:  require_once(/home/appsrcc/cursoweb.professoreugenio.com/conexao/class.conexao.php): Failed to open stream: No such file or directory in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php on line 19
+[27-Apr-2026 21:15:55 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Failed opening required '/home/appsrcc/cursoweb.professoreugenio.com/conexao/class.conexao.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php on line 19
+[27-Apr-2026 21:16:55 America/Sao_Paulo] PHP Warning:  require_once(/home/appsrcc/cursoweb.professoreugenio.com/conexao/class.conexao.php): Failed to open stream: No such file or directory in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php on line 19
+[27-Apr-2026 21:16:55 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Failed opening required '/home/appsrcc/cursoweb.professoreugenio.com/conexao/class.conexao.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php on line 19
+[27-Apr-2026 21:17:04 America/Sao_Paulo] PHP Warning:  require_once(/home/appsrcc/cursoweb.professoreugenio.com/conexao/class.conexao.php): Failed to open stream: No such file or directory in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php on line 19
+[27-Apr-2026 21:17:04 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Failed opening required '/home/appsrcc/cursoweb.professoreugenio.com/conexao/class.conexao.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/appsrcc/cursoweb.professoreugenio.com/admin/modelo/actionAdminCursos.php on line 19
